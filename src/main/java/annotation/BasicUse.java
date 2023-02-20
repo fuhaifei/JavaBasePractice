@@ -27,7 +27,8 @@ import java.util.Scanner;
  *             @Target      -- @Target只能被用来标注“Annotation类型”，而且它被用来指定Annotation的ElementType属性。
  *             @SuppressWarnings -- @SuppressWarnings 所标注内容产生的警告，编译器会对这些警告保持静默。
  * 注解的使用：1. 编译检查：例如@Override，@Deprecated等，在编译时按照注解规则对代码进行检查
- *           2. 在反射中使用注解：框架中的
+ *           2. 在反射中使用注解：框架的底层实现机制
+ *           3. 生成java文档
  * */
 public class BasicUse {
     public BasicUse(){

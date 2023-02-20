@@ -5,8 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="aab9d2e2-4458-459d-9fe4-e7a8520170eb" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/annotation/BasicUse.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/annotation/BasicUse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/annotation/BasicUse.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,18 +40,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="" />
@@ -165,6 +165,7 @@
       <workItem from="1676853106283" duration="20000" />
       <workItem from="1676854920049" duration="5229000" />
       <workItem from="1676861818828" duration="1016000" />
+      <workItem from="1676874419170" duration="306000" />
     </task>
     <task id="LOCAL-00001" summary="初始化java基础复习仓库">
       <created>1676813601521</created>
@@ -173,7 +174,14 @@
       <option name="project" value="LOCAL" />
       <updated>1676813601521</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="完成了注解部分的学习">
+      <created>1676874484310</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1676874484310</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -181,7 +189,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="初始化java基础复习仓库" />
-    <option name="LAST_COMMIT_MESSAGE" value="初始化java基础复习仓库" />
+    <MESSAGE value="完成了注解部分的学习" />
+    <option name="LAST_COMMIT_MESSAGE" value="完成了注解部分的学习" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
