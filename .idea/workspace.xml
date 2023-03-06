@@ -5,8 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="aab9d2e2-4458-459d-9fe4-e7a8520170eb" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/concurrent/BasicUse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/concurrent/ThreadTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/design_parttern/adaptor/Adaptee.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/design_parttern/adaptor/Adapter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/design_parttern/adaptor/Target.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/design_parttern/adaptor/TestAdaptor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/annotation/BasicUse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/annotation/BasicUse.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,7 +62,7 @@
       <recent name="" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.BasicUse.TestUseTwo">
+  <component name="RunManager" selected="JUnit.ThreadTest.TestBasicUse">
     <configuration name="BasicUse.TestUseOne" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="JavaBasePractice" />
       <extension name="coverage">
@@ -90,22 +95,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="BasicUse.testGenericErase" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="Javabase" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="genertics.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="genertics" />
-      <option name="MAIN_CLASS_NAME" value="genertics.BasicUse" />
-      <option name="METHOD_NAME" value="testGenericErase" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="BasicUse.testGetMax" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="Javabase" />
       <extension name="coverage">
@@ -122,17 +111,33 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="BasicUse.typeLost" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="Javabase" />
+    <configuration name="TestAdaptor.testAdapter" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="JavaBasePractice" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="genertics.*" />
+          <option name="PATTERN" value="design_parttern.adaptor.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="genertics" />
-      <option name="MAIN_CLASS_NAME" value="genertics.BasicUse" />
-      <option name="METHOD_NAME" value="typeLost" />
+      <option name="PACKAGE_NAME" value="design_parttern.adaptor" />
+      <option name="MAIN_CLASS_NAME" value="design_parttern.adaptor.TestAdaptor" />
+      <option name="METHOD_NAME" value="testAdapter" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ThreadTest.TestBasicUse" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="JavaBasePractice" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="concurrent.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="concurrent" />
+      <option name="MAIN_CLASS_NAME" value="concurrent.ThreadTest" />
+      <option name="METHOD_NAME" value="TestBasicUse" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -140,11 +145,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.ThreadTest.TestBasicUse" />
+        <item itemvalue="JUnit.TestAdaptor.testAdapter" />
         <item itemvalue="JUnit.BasicUse.TestUseTwo" />
         <item itemvalue="JUnit.BasicUse.TestUseOne" />
         <item itemvalue="JUnit.BasicUse.testGetMax" />
-        <item itemvalue="JUnit.BasicUse.typeLost" />
-        <item itemvalue="JUnit.BasicUse.testGenericErase" />
       </list>
     </recent_temporary>
   </component>
@@ -165,7 +170,11 @@
       <workItem from="1676853106283" duration="20000" />
       <workItem from="1676854920049" duration="5229000" />
       <workItem from="1676861818828" duration="1016000" />
-      <workItem from="1676874419170" duration="306000" />
+      <workItem from="1676874419170" duration="322000" />
+      <workItem from="1676874751711" duration="7000" />
+      <workItem from="1676941491022" duration="7000" />
+      <workItem from="1677569621670" duration="1699000" />
+      <workItem from="1678091848101" duration="1189000" />
     </task>
     <task id="LOCAL-00001" summary="初始化java基础复习仓库">
       <created>1676813601521</created>
@@ -181,7 +190,14 @@
       <option name="project" value="LOCAL" />
       <updated>1676874484310</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="完成了注解部分的学习">
+      <created>1676874729094</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1676874729094</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
