@@ -2,6 +2,14 @@ package concurrent;
 
 import org.junit.Test;
 
+import java.sql.DataTruncation;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.TemporalAccessor;
+import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -35,12 +43,12 @@ import java.util.concurrent.FutureTask;
  *  * run（）只是一个普通方法，直接调用相当于在主线程中调用了一个普通方法
  *  * start()底层会调用start0()方法，在该方法中对run()方法进行调用
  *  * Java Native Interface (JNI)，它允许Java代码和其他语言写的代码进行交互
- * 5. 线程状态：new runnable blocked waiting time_waiting terminated
+ * 5. 线程状态：new runnable blocked waiting(调用wait方法) time_waiting（sleep） terminated
  * 6. sleep() 和 yield方法
- * * sleep()方法：runnable-> time_waiting， 其他线程interrupt能够中断休眠状态，抛出InterruptException
- * * yield()方法：running -> runnable(让出CPU时间片)
- * 6. interrupted() 中断线程状态
- * * 当线程处于wait(),sleep()，join()导致的waiting状态时，interrupted() 中断线程抛出{@link InterruptedException}
+ *  * sleep()方法：runnable-> time_waiting， 其他线程interrupt能够中断休眠状态，抛出InterruptException
+ *  * yield()方法：running -> runnable(让出CPU时间片)
+ * 7. interrupted() 中断线程状态
+ *  * 当线程处于wait(),sleep()，join()导致的waiting状态时，interrupted() 中断线程抛出{@link InterruptedException}
  *   并重置interrupted状态
  *      public static boolean interrupted() {
  *         Thread t = currentThread();
@@ -51,7 +59,11 @@ import java.util.concurrent.FutureTask;
  *         }
  *         return interrupted;
  *     }
- * * 运行时调用interrupted状态，会导致interrupted = true,即通过interrupted线程可判断自身是否被中断
+ *  * 运行时调用interrupted状态，会导致interrupted = true,即通过interrupted线程可判断自身是否被中断
+ * 8. 不可变对象
+ *  * 当对象为有状态的，且线程操作会影响对象的状态，状态又会影响对象行为，在并发情况下就可能出现race condition
+ *  * 例如：SimpleDateFormat（线程不安全）->  DateTimeFormatter
+ *  * final修饰对象为不可变对象，方法不可重写
  * */
 
 public class ThreadTest {
@@ -171,5 +183,33 @@ public class ThreadTest {
         Thread.sleep(1000);
         t1.interrupt();
         System.out.println("主线程退出");
+    }
+
+    @Test
+    public void testVariableObject() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date parse = sdf.parse("1998-08-19");
+        System.out.println(parse);
+        for (int i = 0; i < 10; i++) {
+            new Thread(() ->{
+                try {
+                    sdf.parse("1998-08-19");
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+            }).start();
+        }
+    }
+
+    @Test
+    public void testConstObject(){
+        DateTimeFormatter sdf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate parse = sdf.parse("1998-08-19", LocalDate::from);
+        System.out.println(parse);
+        for (int i = 0; i < 10; i++) {
+            new Thread(() ->{
+                sdf.parse("1998-08-19", LocalDate::from);
+            }).start();
+        }
     }
 }

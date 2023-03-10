@@ -5,9 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ade7dba8-ba58-4d99-9df2-e3a67d876c08" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/concurrent/LockTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/concurrent/JUCTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/concurrent/MemoryTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/concurrent/NoLockTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/design_parttern/flyweight/Flyweight.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/design_parttern/flyweight/FlyweightFactory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/design_parttern/flyweight/FlyweightInterface.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/design_parttern/singleton/SafeStaticLazySingleton.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/design_parttern/singleton/Singleton.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/concurrent/BasicUse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/concurrent/BasicUse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/concurrent/LockTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/concurrent/LockTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/concurrent/ThreadTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/concurrent/ThreadTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -25,8 +34,20 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="JsbtTreeLayoutManager">
+    <layout place="tools.popupGrunt">
+      <scroll-view-position x="0" y="0" />
+    </layout>
+  </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
   </component>
   <component name="ProjectId" id="2LnnhmUIuT8mIAyeXNHpEtspgEM" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -34,25 +55,62 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "D:/CodeProject/LearnProject[Normal]",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "fileTemplates"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/CodeProject/LearnProject[Normal]&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;fileTemplates&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.LockTest.testSync">
-    <configuration name="LockTest.testSync" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="Javabase" />
+  <component name="RunManager" selected="JUnit.FlyweightFactory.testInteger">
+    <configuration name="FlyweightFactory.testFlyweight" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="JavaBasePractice" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="design_parttern.flyweight.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="design_parttern.flyweight" />
+      <option name="MAIN_CLASS_NAME" value="design_parttern.flyweight.FlyweightFactory" />
+      <option name="METHOD_NAME" value="testFlyweight" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="FlyweightFactory.testInteger" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="JavaBasePractice" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="design_parttern.flyweight.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="design_parttern.flyweight" />
+      <option name="MAIN_CLASS_NAME" value="design_parttern.flyweight.FlyweightFactory" />
+      <option name="METHOD_NAME" value="testInteger" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NoLockTest.testAdder" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="JavaBasePractice" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="concurrent.*" />
@@ -60,31 +118,15 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="concurrent" />
-      <option name="MAIN_CLASS_NAME" value="concurrent.LockTest" />
-      <option name="METHOD_NAME" value="testSync" />
+      <option name="MAIN_CLASS_NAME" value="concurrent.NoLockTest" />
+      <option name="METHOD_NAME" value="testAdder" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="LockTest.testSynchronized" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="Javabase" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="concurrent.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="concurrent" />
-      <option name="MAIN_CLASS_NAME" value="concurrent.LockTest" />
-      <option name="METHOD_NAME" value="testSynchronized" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ThreadTest.TestJoin" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="Javabase" />
+    <configuration name="ThreadTest.testConstObject" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="JavaBasePractice" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="concurrent.*" />
@@ -93,14 +135,14 @@
       </extension>
       <option name="PACKAGE_NAME" value="concurrent" />
       <option name="MAIN_CLASS_NAME" value="concurrent.ThreadTest" />
-      <option name="METHOD_NAME" value="TestJoin" />
+      <option name="METHOD_NAME" value="testConstObject" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ThreadTest.testInform" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="Javabase" />
+    <configuration name="ThreadTest.testConstant" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="JavaBasePractice" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="concurrent.*" />
@@ -109,23 +151,7 @@
       </extension>
       <option name="PACKAGE_NAME" value="concurrent" />
       <option name="MAIN_CLASS_NAME" value="concurrent.ThreadTest" />
-      <option name="METHOD_NAME" value="testInform" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ThreadTest.testInterrupt" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="Javabase" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="concurrent.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="concurrent" />
-      <option name="MAIN_CLASS_NAME" value="concurrent.ThreadTest" />
-      <option name="METHOD_NAME" value="testInterrupt" />
+      <option name="METHOD_NAME" value="testConstant" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -133,18 +159,18 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.LockTest.testSync" />
-        <item itemvalue="JUnit.LockTest.testSynchronized" />
-        <item itemvalue="JUnit.ThreadTest.testInform" />
-        <item itemvalue="JUnit.ThreadTest.testInterrupt" />
-        <item itemvalue="JUnit.ThreadTest.TestJoin" />
+        <item itemvalue="JUnit.FlyweightFactory.testInteger" />
+        <item itemvalue="JUnit.FlyweightFactory.testFlyweight" />
+        <item itemvalue="JUnit.ThreadTest.testConstObject" />
+        <item itemvalue="JUnit.ThreadTest.testConstant" />
+        <item itemvalue="JUnit.NoLockTest.testAdder" />
       </list>
     </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="aab9d2e2-4458-459d-9fe4-e7a8520170eb" name="Changes" comment="" />
+      <changelist id="ade7dba8-ba58-4d99-9df2-e3a67d876c08" name="Changes" comment="" />
       <created>1676515838227</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -154,6 +180,8 @@
       <workItem from="1676594574149" duration="16689000" />
       <workItem from="1676794610738" duration="920000" />
       <workItem from="1676813366955" duration="323000" />
+      <workItem from="1678240592220" duration="13850000" />
+      <workItem from="1678351942842" duration="8477000" />
     </task>
     <task id="LOCAL-00001" summary="初始化java基础复习仓库">
       <created>1676813601521</created>
@@ -171,6 +199,21 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="初始化java基础复习仓库" />
     <option name="LAST_COMMIT_MESSAGE" value="初始化java基础复习仓库" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>jar://$USER_HOME$/.jdks/openjdk-17.0.1/lib/src.zip!/java.base/java/text/DateFormat.java</url>
+          <line>429</line>
+          <properties class="java.text.DateFormat" method="parse">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
