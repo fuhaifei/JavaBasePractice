@@ -256,6 +256,5 @@ public class BasicUse {
         Semaphore semaphore = new Semaphore(10);
         ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
         readWriteLock.readLock().lockInterruptibly();
-        ArrayBlockingQueue
     }
 }
