@@ -1,22 +1,25 @@
 package concurrent;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.DataTruncation;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.TemporalAccessor;
-import java.util.Date;
-import java.util.Optional;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
+import java.util.*;
+import java.util.concurrent.*;
 
 /**
- * 线程相关知识点
+ * 一、线程相关知识点
  * 1. 实现线程的3种方式
  *  * 继承Thread类，并重写对应的run()方法
  *  * 实现Runnable接口的run方法，作为参数传入Thread对象的初始化方法
@@ -64,10 +67,83 @@ import java.util.concurrent.FutureTask;
  *  * 当对象为有状态的，且线程操作会影响对象的状态，状态又会影响对象行为，在并发情况下就可能出现race condition
  *  * 例如：SimpleDateFormat（线程不安全）->  DateTimeFormatter
  *  * final修饰对象为不可变对象，方法不可重写
+ *
+ * 二、线程池相关
+ * 1. 线程池 ThreadPoolExecutor 实现原理(一个工作线程数组+一个满足生产者消费者模式的工作队列)
+ *  * 使用int高3位表示线程池状态，低29位表示线程数量
+ *      * RUNNIING, SHUTDOWN(不接收任务，处理阻塞对象中的任务), STOP（完全停止）, TIDYING（即将进入终结）, TERMINATED（终结状态）
+ *      * 使用一个int存储状态+线程数量，是为了通过cas操作保证状态修改的原子性
+ *  * 线程池执行流程
+ *      * 随着任务的不断增加，线程池不断创建线程处理任务
+ *      * 当线程数达到corePoolSize且无线程空闲时，任务加入到阻塞队列
+ *      * 若设置为有界队列，线程池最多创建 maximunPoolSize - corePoolSize 个线程救急
+ *      * 当线程数到达maximunPoolSize后，还有无法处理的任务，执行拒绝策略
+ *          * 默认AbortPolicy 让调用者抛出 RejectedExecutionException 异常
+ *          * CallerRunsPolicy 让调用者运行任务
+ *          * DiscardPolicy 放弃本次任务
+ *          * DiscardOldestPolicy 放弃队列中最早的任务，本任务取而代之
+ *      * 当任务需求下降，根据keepAliveTime停止线程资源
+ *  * 关闭线程池方法
+ *      * shutdown() ->    SHUTDOWN
+ *      * shutdownNow() -> STOP
+ *  * 获取固定配置线程池
+ *     * 延迟线程线程池：Executors.newScheduledThreadPool(1);  DelayedWorkQueue：
+ *     * 单线程线程：Executors.newSingleThreadExecutor();     LinkedBlockingQueue：无限长队列
+ *     * 固定线程池：Executors.newFixedThreadPool(10);        LinkedBlockingQueue：无限长队列
+ *     * 临时线程线程池：Executors.newCachedThreadPool();      SynchronousQueue：放进队列元素被消费后才能返回
+ *  * 任务调度线程池
+ *     * {@link java.util.Timer} jdk5.0之前用来实现任务调度功能
+ *          * 多生产者，单消费者（执行任务线程只有一个）的调度模型
+ *          * 消费线程不断读取优先队列（开始执行时间为优先级）中的任务，根据开始时间休眠到对应时间点，执行任务，重复进行循环
+ *    * Executors.newScheduledThreadPool(2) 调度线程池
+ *          * 多生产者，多消费者的调度模型, 相较于Timer可以设置多个消费线程
+ *          * 一个延迟调度方法：.schedule()
+ *          * 两个周期调度方法：.scheduleAtFixedRate()/.scheduleWithFixedDelay(),两者区别在于后者在
+ *            上一个任务完成的时间基础上进行延迟。
+ * * Fork/join：任务拆分多线程模型
+ *
+ * * ThreadLocal 和 InheritableThreadLocal
+ *     * ThreadLocal: 保存线程的变量，线程之间相互隔离
+ *          * 原理：每个线程将自身持有的所有ThreadLocal放在一个ThreadLocalMap中
+ *                 其中Key为对象哈希值，value为ThreadLocal存储的值
+ *          * ThreadLocal.ThreadLocalMap threadLocals
+ *     * InheritableThreadLocal：父子线程之间实现线程参数传递
+ *          * getMap()获得ThreadLocalMap对象从threadLocals->inheritableThreadLocals，
+ *            inheritableThreadLocals在创建时会复制父线程中的ThreadLocal对象
+ *
+ *          * ThreadLocal.ThreadLocalMap inheritableThreadLocals
+ * * Fork/Join：JDK1.7加入的新的线程池实现，分治实现cpu密集型云散
+ *     * 分治任务继承 RecursiveTask（有返回值）或者 RecursiveAction(无法返回值)，实现compute方法（）
+ *     * 通过调用fork()/jion()实现多线程递归
+ protected Integer compute() {
+ if(begin == end){
+ return aimArray[begin];
+ }
+ int middle = (begin + end) / 2;
+
+ AddTask leftTask = new AddTask(begin, middle, aimArray);
+ AddTask rightTask = new AddTask(middle + 1, end, aimArray);
+ leftTask.fork();
+ rightTask.fork();
+ return leftTask.join() + rightTask.join();
+ }
+ *
  * */
+
 
 public class ThreadTest {
 
+
+    Logger logger;
+    @Before
+    public void initLog(){
+        logger = LoggerFactory.getLogger(ThreadTest.class);
+    }
+
+    /**
+     * 1.*********************************************************************************************************
+     *  线程基本使用
+     * */
     class MyThread extends Thread{
         @Override
         public void run(){
@@ -210,6 +286,196 @@ public class ThreadTest {
             new Thread(() ->{
                 sdf.parse("1998-08-19", LocalDate::from);
             }).start();
+        }
+    }
+
+
+    /**
+     * 2.*********************************************************************************************************
+     * 案例一：线程池使用
+     * */
+    public void threadExecutor() throws InterruptedException, ExecutionException {
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(10,15,
+                1, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+        //常见接口
+        //1.执行单个任务
+        executor.execute(()->{
+
+        });
+
+        //2.回调任务
+        Future<?> submit = executor.submit(() -> {
+        });
+
+        //3.批量提交任务
+        List<Future<Object>> futures = executor.invokeAll(new ArrayList<>());
+
+        //4.提交任务，第一个返回的正常执行，其他取消
+        Object o = executor.invokeAny(new ArrayList<>());
+        Executors.newScheduledThreadPool(1);
+        Executors.newSingleThreadExecutor();
+        Executors.newFixedThreadPool(10) ;
+        Executors.newCachedThreadPool();
+    }
+
+    /**
+     * 测试Timer
+     * */
+    @Test
+    public void testTimer() throws InterruptedException {
+        Timer timer = new Timer();
+        //两个TimerTask
+        TimerTask t1 = new TimerTask() {
+            @Override
+            public void run() {
+                logger.info(Thread.currentThread().getName() + " finish task 1， sleep 1s");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+        TimerTask t2 = new TimerTask() {
+            @Override
+            public void run() {
+                logger.info(Thread.currentThread().getName() + " finish task 2");
+            }
+        };
+
+        timer.schedule(t1, 1000);
+        timer.schedule(t2, 1000);
+        Thread.sleep(10000);
+        System.out.println(Thread.currentThread().getName());
+    }
+
+    /**
+     * 任务调度线程池
+     * */
+    @Test
+    public void testScheduleTP() throws InterruptedException {
+        ScheduledExecutorService se = Executors.newScheduledThreadPool(2);
+
+        se.schedule(() ->{
+            try {
+                logger.info(Thread.currentThread().getName() + " finish Work 1");
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }, 0, TimeUnit.SECONDS);
+
+        se.schedule(() ->{
+            try {
+                logger.info(Thread.currentThread().getName() + "start to Work 2");
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }, 0, TimeUnit.SECONDS);
+
+        ScheduledFuture<?> schedule = se.schedule(() -> {
+            logger.info(Thread.currentThread().getName() + "start to Work 3");
+        }, 0, TimeUnit.SECONDS);
+        //schedule.cancel(true);
+
+        Thread.sleep(10000);
+        //每周四下午六点执行
+        //1.获取周四下午6点的时间
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime aimTime = now.with(DayOfWeek.THURSDAY).withHour(18).
+                withMinute(0).withSecond(0).withNano(0);
+        if(now.compareTo(aimTime) >=0){
+            aimTime = aimTime.plusWeeks(1);
+        }
+        long initialDelay = Duration.between(now, aimTime).toMillis();
+        se.scheduleAtFixedRate(() ->{logger.info("happy thursday");}, initialDelay,
+                7 * 24 * 60 * 1000, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Fork/join
+     * */
+
+    public int multiThreadAdd(InheritableThreadLocal<int[]> rangeLocal,
+                              int[] aimArray, ExecutorService executorService) throws ExecutionException, InterruptedException {
+        int[] range = rangeLocal.get();
+        if(range[0] == range[1]){
+            return aimArray[range[0]];
+        }
+        int middle = (range[0] + range[1]) / 2;
+
+        //求左边区间
+        rangeLocal.set(new int[]{range[0], middle});
+        Future<Integer> left = executorService.submit(() -> {
+            try {
+                return multiThreadAdd(rangeLocal, aimArray, executorService);
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        //右区间
+        rangeLocal.set(new int[]{middle + 1, range[1]});
+        Future<Integer> right = executorService.submit(() -> {
+            try {
+                return multiThreadAdd(rangeLocal, aimArray, executorService);
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        return left.get() + right.get();
+    }
+
+    public int add(int[] aimArray){
+        int result = 0;
+        for (int i = 0; i < aimArray.length; i++) {
+            result += aimArray[i];
+        }
+        return result;
+    }
+
+    @Test
+    public void testMyMultiThread() throws ExecutionException, InterruptedException {
+        int[] aimArray = {1,2,3,4,5,6,7,8,9,10};
+        InheritableThreadLocal<int[]> range = new InheritableThreadLocal<>();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        range.set(new int[]{0, aimArray.length - 1});
+        logger.info("call multiThreadAdd:");
+        logger.info("result:" + multiThreadAdd(range, aimArray, executorService));
+        logger.info("call normalAdd:");
+        logger.info("result:" + add(aimArray));
+        ForkJoinPool forkJoinPool = new ForkJoinPool(5);
+        logger.info("call forJoinAdd:");
+        logger.info("result:" + forkJoinPool.invoke(new AddTask(0, aimArray.length - 1, aimArray)));
+    }
+
+    /**
+     * Fork/joinTest
+     * */
+    class AddTask extends RecursiveTask<Integer>{
+        int begin;
+        int end;
+        int[] aimArray;
+
+        public AddTask(int begin, int end, int[] aimArray) {
+            this.begin = begin;
+            this.end = end;
+            this.aimArray = aimArray;
+        }
+
+        @Override
+        protected Integer compute() {
+            if(begin == end){
+                return aimArray[begin];
+            }
+            int middle = (begin + end) / 2;
+
+            AddTask leftTask = new AddTask(begin, middle, aimArray);
+            AddTask rightTask = new AddTask(middle + 1, end, aimArray);
+            leftTask.fork();
+            rightTask.fork();
+            return leftTask.join() + rightTask.join();
         }
     }
 }

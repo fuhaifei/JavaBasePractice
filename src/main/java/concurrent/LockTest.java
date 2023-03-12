@@ -38,6 +38,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * * 条件变量(Condition)：唤醒所有等待条件的线程，与锁绑定使用(接口从wait/notify变味了await/signal)
  *      * await()
  *      * signal()
+ *
  * */
 
 public class LockTest {

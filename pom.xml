@@ -27,6 +27,25 @@
             <!-- 这里注意，从maven仓库复制过来的代码记得把下面这行注释掉 -->
             <!--<scope>provided</scope>-->
         </dependency>
+
+        <!--log4j-->
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging-api</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.26</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.26</version>
+        </dependency>
     </dependencies>
 
 </project>
