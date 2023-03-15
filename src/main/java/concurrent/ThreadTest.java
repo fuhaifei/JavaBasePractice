@@ -100,6 +100,7 @@ import java.util.concurrent.*;
  *          * 一个延迟调度方法：.schedule()
  *          * 两个周期调度方法：.scheduleAtFixedRate()/.scheduleWithFixedDelay(),两者区别在于后者在
  *            上一个任务完成的时间基础上进行延迟。
+ *   * ExecutorService:在线程池的基础上增加了对于异步任务的支持
  * * Fork/join：任务拆分多线程模型
  *
  * * ThreadLocal 和 InheritableThreadLocal
