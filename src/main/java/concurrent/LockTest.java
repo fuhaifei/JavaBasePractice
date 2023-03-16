@@ -16,6 +16,28 @@ import java.util.concurrent.locks.ReentrantLock;
  *      * Owner：当前通过synchronized得到对象锁的线程
  *      * EntryList：等待获取对象锁的线程列表，阻塞在synchronized代码块的线程（blocked）
  *      * WaitSet: 调用wait()方法的线程，释放锁进入waiting状态，进入WaitSet
+ *      * 锁外调用wait()会抛出java.lang.IllegalMonitorStateException异常
+ *      * wait()被唤醒后继续从当前位置继续执行
+ * 1.1 synchronized原理
+ *  * Java对象布局：对象头（Mark word + 类型指针，指向类元数据）+实例数据+对齐填充
+ *      * Mark word：哈希码（HashCode）、GC分代年龄、锁状态标志、 线程持有的锁、偏向线程ID、偏向时间戳
+ *      * 偏向锁->线程ID;轻量级锁->线程栈Lock Record指针;重量级锁->堆中的monitor指针
+ *  * Lock Record:执行同步块之前，在每个现成的栈帧中创建一个Lock Record，包括一个用来存储对象头的mark word和指向对象的指针
+ *  * 分为四种状态：无锁状态、偏向锁状态、轻量级锁状态、重量级锁状态
+ *      * 偏向锁
+ *          * 线程通过CAS操作将MarkWord中的threadId从0改为自己的ID，成功继续执行，否则升级为轻量级锁
+ *          * 偏向锁对于支持低成本可重入：判断threadId为当前线程，在线程栈中创建空mark word的Lock Record
+ *          * 偏向锁只有在出现竞争时才会被动释放或者升级->回到未锁定（执行完）/轻量级锁状态（为执行完）
+ *      * 轻量级锁
+ *          * 线程栈创建一个LockRecord，obj指向锁对象，锁对象maskword存储到LockRecord中
+ *          * 通过尝试CAS将LockRecord地址存储到对象头mark word中，成功则获取锁成功
+ *          * 释放：逐个删除指向锁对象的lockRecord（可重入），直到最后一个包含mark word的LockRecord，基于CAS操作将mask word写回对象头
+ *      * 重量级锁
+ *          * 轻量级锁获取失败或者轻量级锁释放失败（唤醒被挂起的线程）
+ *          * mark word`为指向一个堆中monitor对象的指针
+ *      * 偏向锁就是一个标记，每次访问只需要比较一下标记即可，无需CAS
+ *        轻量级锁是一个轮流使用的锁，一个人使用时贴上标记，离开时撕下标记
+ *        重量级锁是真的出现并发使用的情况
  * 2. object.notify() 和 object.notifyAll()
  *  * 持有锁的线程通过调用notify()方法唤醒WaitSet中等待的线程
  *  * 被唤醒的线程等待调用notify()线程释放锁后继续执行
@@ -38,6 +60,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * * 条件变量(Condition)：唤醒所有等待条件的线程，与锁绑定使用(接口从wait/notify变味了await/signal)
  *      * await()
  *      * signal()
+ *
  * */
 
 public class LockTest {
@@ -143,6 +166,7 @@ public class LockTest {
             }
         });
         t1.start();
+        Thread.sleep(1000);
         synchronized (lockObject){
             num = 100;
         }

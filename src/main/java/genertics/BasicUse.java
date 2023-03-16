@@ -114,7 +114,6 @@ public class BasicUse {
         List fatherList = new ArrayList<String>();
         //使用类型通配符
         List<String>[] fatherList2 = (List<String>[]) new ArrayList<?>[10];
-
     }
 
 }
