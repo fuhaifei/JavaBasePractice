@@ -166,6 +166,7 @@ public class LockTest {
             }
         });
         t1.start();
+        Thread.sleep(1000);
         synchronized (lockObject){
             num = 100;
         }

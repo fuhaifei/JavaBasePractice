@@ -101,7 +101,6 @@ import java.util.concurrent.*;
  *          * 两个周期调度方法：.scheduleAtFixedRate()/.scheduleWithFixedDelay(),两者区别在于后者在
  *            上一个任务完成的时间基础上进行延迟。
  *   * ExecutorService:在线程池的基础上增加了对于异步任务的支持
- * * Fork/join：任务拆分多线程模型
  *
  * * ThreadLocal 和 InheritableThreadLocal
  *     * ThreadLocal: 保存线程的变量，线程之间相互隔离
@@ -115,7 +114,7 @@ import java.util.concurrent.*;
  *          * ThreadLocal.ThreadLocalMap inheritableThreadLocals
  * * Fork/Join：JDK1.7加入的新的线程池实现，分治实现cpu密集型云散
  *     * 分治任务继承 RecursiveTask（有返回值）或者 RecursiveAction(无法返回值)，实现compute方法（）
- *     * 通过调用fork()/jion()实现多线程递归
+ *     * 通过调用fork()/join()实现多线程递归
  protected Integer compute() {
  if(begin == end){
  return aimArray[begin];
