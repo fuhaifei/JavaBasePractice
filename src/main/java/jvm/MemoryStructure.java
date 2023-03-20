@@ -7,7 +7,7 @@ import org.junit.Test;
  * 1. 基本组成
  *      * 本地方法栈（Native Method Stacks）
  *      * 程序计数器（Program Counter Register）
- *      * 虚拟机栈（JVM Stacks）：运行时单位
+ *      * 虚拟机栈（jvm.JVM Stacks）：运行时单位
  *      * 堆区（Heap）：存储单位
  *      * 元数据区（Metaspace）
  * 2. 程序计数器（Program Counter Register）
@@ -21,7 +21,7 @@ import org.junit.Test;
  *        是用Java实现的，但是它实现调用的是该类里的本地方法setPriority0()
  *      * Java虚拟机栈于管理Java方法的调用，而本地方法栈用于管理本地方法的调用，在Execution Engine 执行时加载本地方法库
  *      * 当某个线程调用一个本地方法时，它就进入了一个全新的并且不再受虚拟机限制的世界，它和虚拟机拥有同样的权限
- * 4. 虚拟机栈（JVM Stacks）
+ * 4. 虚拟机栈（jvm.JVM Stacks）
  *      * 数据以栈帧（Stack Frame）形式存在,对应着一次次的Java方法调用
  *      * 固定大小（StackoverflowError）或者动态扩展（OutOfMemoryError）
  *      * 栈帧的内部结构：

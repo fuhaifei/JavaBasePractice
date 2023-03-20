@@ -1,3 +1,5 @@
+package jvm;
+
 import org.junit.Test;
 
 /**
@@ -74,7 +76,7 @@ import org.junit.Test;
  *          * 运行时常量池：字节码文件加载运行后常量池->运行时常量池
  *              * 不再是常量池中的符号地址了，这里换为真实地址
  * */
-public class JVM {
+public class ObjectStructure {
 
 
     @Test
