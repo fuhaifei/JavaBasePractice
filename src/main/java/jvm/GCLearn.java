@@ -99,10 +99,15 @@ package jvm;
  *          * 将堆区域花费为多个大小相同的区域（Region）,每一个Region都可以根据运行情况的需要，扮演Eden、Survivor、老年代区域、或者Humongous区域
  *          * 大对象会存放到多个连续的Humongous区域，G1大多数情况下会把这个区域当作老年代来看待
  *          * 垃圾收集步骤
- *              * 1.初始标记（Initial Marking）需要STW，只标记与GC Roots直接关联的对象
- *              * 2.并发标记（Concurrent Marking）：不需要STW，基于引用链遍历整个堆，找出存活的对象（并发）
- *              * 3.最终标记（Final Marking）：需要STW，标记之前并发标记时用户线程增加的垃圾
- *              * 4.筛选回收（Live Data Counting and Evacuation）：需要STW，根据以上三个阶段标记完成的数据，
+ *              * 1.年轻代GC：STW,GC创建回收集合（需要被回收内存分段的集合）
+ *              * 2. 并发标记过程：
+ *                  * 1.初始标记（Initial Marking）需要STW，只标记与GC Roots直接关联的对象
+ *                  * 2.并发标记（Concurrent Marking）：不需要STW，基于引用链遍历整个堆，找出存活的对象（并发）
+ *                  * 3.最终标记（Final Marking）：需要STW，标记之前并发标记时用户线程增加的垃圾
+ *                  * 4.独占清理（Live Data Counting and Evacuation）：需要STW，计算各个区域的存辉对象和GC回收比例，排序
+ *                  * 5.并发清理：识别并清理完全空闲的区域
+ *              * 3. 混合回收过程（Mixed GC）:混合回收的回收集（Collection Set）包括八分之一的老年代内存分段，Eden区内存分段，Survivor区内存分段。
+ *              * 4. Full GC(可选)：如果上述方式不能正常工作，G1会停止应用程序的执行（Stop-The-World），使用单线程的内存回收算法进行垃圾回收
  *                  计算出各个Region的回收价值和成本，再根据用户期望的停顿时间来决定要回收多少个Region
  *              * 回收采用标记复制算法
  * 7. 安全点（Safepoint）和安全区域(SafeRegion)

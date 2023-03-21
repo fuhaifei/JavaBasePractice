@@ -27,16 +27,21 @@ import java.io.FileNotFoundException;
  *      * AppClassLoader: 应用程序类加载器
  *          * on the application class path, module path, and JDK-specific tools.
  *          * classLoader.getSystemclassLoader() 获取的就是AppClassLoader
- * 4. 自定义类加载器
+ * 4. 自定义类加载器（打破双亲委派机制）
  *      * 为什么要自定义加载器
  *          * 隔离加载类：不同的框架出现出现全路径名完全相同的类, 通过自定义类加载器实现隔离
  *          * 修改类加载的方式
  *          * 扩展加载源（从别的地方加载）+ 防止源码泄露
  *      * 如何自定义类加载器： 继承ClassLoader类，重写其findClass方法
+ *      * 打破双亲委派机制
+ *          * 实现自定义类加载器，重写其findClass和loadClass方法
+ *          * 案例：Tomcat自定义了WebAppClassLoader加载器，首先加载Web应用自定义的类，如果加载不到在按照
+ *                双亲委派机制交给父类加载
  *      * 获取ClassLoader的主要方法
  *          * clazz.getClassLoader(): 每个class对象提供加载其的类加载器
  *          * Thread.currentThread().getContextClassLoader(): 获得当前线程上下文的ClassLoader
  *          * ClassLoader.getSystemClassLoader(): 获得系统ClassLoader
+ *
  * 5. 双亲委派原理
  *      * 类加载首先向上委托直到最上父类，能加载就加载，不能加载向下传
  *      * 优点：避免类的重复加载；保护程序安全，避免核心API被篡改
