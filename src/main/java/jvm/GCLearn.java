@@ -85,7 +85,7 @@ package jvm;
  *          * Parallel Scavenge 收集器提供了一些参数，给用户按自身需求控制吞吐量
  *      * Parallel Old（-XX:+UseParallelOldGC）：Parallel Scavenge的老年代版本
  *          * 采用标记-整理算法的老年代垃圾回收器
- *          * JDK8的默认垃圾收集器组合：Parallel Scavenge + Parallelo Old
+ *          * JDK8的默认垃圾收集器组合：Parallel Scavenge + Parallel Old
  *      * CMS （-XX:+UseConcMarkSweepGC） 是JDK1.4后期推出的GC收集器，它是一款并发低停顿的收集器
  *          * 采用标记-清除算法的老年代垃圾回收器
  *          * 垃圾收集步骤

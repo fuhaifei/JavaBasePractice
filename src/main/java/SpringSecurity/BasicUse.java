@@ -70,11 +70,11 @@ package SpringSecurity;
  * JWT(Json Web Token)：规定了数据传输格式
  *      * 为什么要使用JWT token？ 就是为多种终端设备，提供统一的、安全的令牌格式
  *      * 包含三个由点（.）分隔的部分，Header.Payload.Signature : xxxxx.yyyyy.zzzzz
- *          * Header: 令牌的类型 + 加密算法类型
- *          * Payload：内容也是一个Json对象，它是存放有效信息的地方，它可以存放JWT提供的现成字段，
- *                      比 如：iss（签发者），exp（过期时间戳）， sub（面向的用户）等，也可自定义字段
- *          * Signature: 签名，用于防止JWT内容被篡改
- *             *   base64UrlEncode(header). base64UrlEncode(payload).secret
+ *  *          * Header: 令牌的类型 + 加密算法类型
+ *  *          * Payload：内容也是一个Json对象，它是存放有效信息的地方，它可以存放JWT提供的现成字段，
+ *  *                      比 如：iss（签发者），exp（过期时间戳）， sub（面向的用户）等，也可自定义字段
+ *  *          * Signature: 签名，用于防止JWT内容被篡改
+ *  *             *   base64UrlEncode(header). base64UrlEncode(payload).secret
  *             & SignatureAlgorithm.HS512
  *      * 基于io.jsonwebtoken实现，负载中只存储用户名，其他密码，角色等信息存放在redis缓存中
  *      * JWT token存放在请求header的Authorization属性中

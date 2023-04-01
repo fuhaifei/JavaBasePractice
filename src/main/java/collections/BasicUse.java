@@ -82,6 +82,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  *          * 不再基于key的hashcode放置元素，根据comparator的顺序关系放置，如果两个Key大小相同，则认为位于同一个位置
  *      * HashMap/LinkedHashMap均支持key = null, 取0作为null的哈希值，TreeMap不支持key=null,Objects.requireNonNull(key);
  *      * HashSet/LinkedHashSet支持key=null, TreeSet不支持
+ *          * Set底层基于HashMap,value存放似有对象:private static final Object PRESENT = new Object();
  * 4. 线程安全集合
  *      * 安全集合：Hashtable,Vector
  *      * 基于Collections装饰的线程安全集合：Collections.synchronizedList
@@ -99,7 +100,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  *          * JDK1.8实现：基本与HashMap相同：数组+链表/红黑树
  *              * 懒惰初始化，基于cas操作初始化表（CAS设置SIZECTL，只有操作成功的线程能够进行初始化）
  *              * put() 基于cas操作初始化表和每个桶位置对应的链表头,当需要执行链表插入时，只需要基于synchronized锁住链表头
- *              * get() 无锁操作，若get获得的是ForwardingNode，则在新表中进行搜素哦
+ *              * get() 无锁操作，若get获得的是ForwardingNode，则在新表中进行搜索
  *              * size() 元素个数统计类似于ADDER基于cell的实现，无竞争向baseCount添加，有竞争向cell累加
  *              * treeify()/untreeify() 基于synchronized锁住链表头
  *

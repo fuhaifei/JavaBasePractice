@@ -56,8 +56,9 @@ import org.junit.Test;
  * 3. String
  *      * 底层存储结构
  *          * JDK8及以上版本：private final char[] value;(char两个字节)
- *          * JDK9及以后版本：private final byte[] value(byte一个字节) + private final byte coder（标记编码ISO/UTF-16）;
+ *          * JDK9及以后版本：private final byte[] value(byte一个字节) + private final byte coder（标记编码Latin-1/UTF-16）;
  *          * 为了解决字符串占用大量堆空间的问题，从应用收集到的数据表明大多数字符为Latin-1,只占用一个字符
+ *          * 解释：<a href="https://www.zhihu.com/question/447224628">...</a>
  *      * 字符串常量池(StringTable)
  *          * StringTable是一个哈希表，key为字符串，value为字符串在堆中的地址
  *      * 字符串常量池的位置
@@ -101,5 +102,8 @@ public class ObjectStructure {
         String str2 = "aa";
 
         System.out.println(str1 == str2);
+
+        StringBuilder s6 = new StringBuilder();
+        s6.toString();
     }
 }
