@@ -35,6 +35,13 @@ import java.util.concurrent.locks.*;
  *  happens-before:解决强内存模型约束，和编译器、处理器希望约束更少方便优化的冲突
  *      * 操作1 happens-before 操作2,无论实际执行顺序如何，最终结构必须和 操作1先执行，操作2后执行一致
  *      * 8个原则（记不住，简单看看）
+ *          * 程序次数原则：一个线程中，书写在前面的操作先于书写在后面的操作
+ *          * 管程锁定原则：unlock操作先行发生于后面对同一个锁的lock操作
+ *          * volatile变量原则：volatile写操作先发生于后面对于变量的读操作
+ *          * 线程终止原则：线程中的所有操作先于现成的终止检测操作
+ *          * 线程中中断原则：线程interrupt()调用先于中断线程检测到中断事件的发生
+ *          * 对象终结原则：对象的初始化先行发生于他的finalize()方法的开始
+ *          * 传递性原则
  *
  *  可见性
  *      * 为了降低线程访问主存的频率，线程会将访问变量复制到自身工作内存，导致不同线程见数据不可见
@@ -63,7 +70,6 @@ import java.util.concurrent.locks.*;
  *      实现指令执行的加速
  *      * 指令重排包括三个阶段：1.编译器优化重排。2.指令并行重排。3.内存系统重排，
  *      * 不管编译器和CPU如何重排序，指令重排保证在单线程情况下程序的结果是正确的（as-if-serial）：读后写，写后读，写后写（数据依赖关系）
- *      *
  *
  *  8. AQS原理(AbstractQueueSynchronizer): 抽象队列同步框架
  *      * 定义中包括：
@@ -133,6 +139,12 @@ import java.util.concurrent.locks.*;
  *        if (shared)
  *          signalNextIfShared(node);
  *      * 写线程独占锁，导致其他并发线程进入队列
+ *      * 写线程重入基于额外的计数属性实现
+ *          * firstReader(第一次获取读锁的线程ID)+firstReaderHoldCount(重入次数)：第一个获取读锁的重入记录
+ *          * 以ThreadLocal形式与线程绑定的ReaderHolders: t_id(线程ID) + count（Count）
+ *          * cachedHolderCounter: 为了减少调用ThreadLocal.get(),缓存上次调用的ReaderHolders
+ *          * 重入流程：判断是否为firstReader->判断是否在cachedHolderCounter->ReaderHolders
+ *          * ReaderHolders中存储线程ID是为了避免循环引用，降低GC垃圾回收成本
  * 13. CountDownLatch:主线程等待工作线程执行完毕后，继续执行（加强版join）
  *      * 基于AQS实现，类似于一个单次使用的Semaphore
  *      * API:CountDownLatch(int count),countDown(),await()
@@ -448,6 +460,10 @@ public class BasicUse {
         Thread.sleep(1000);
         wait();
         System.out.println("exit");
+        ReentrantLock reentrantLock = new ReentrantLock();
+        Condition condition = reentrantLock.newCondition();
+        condition.await();
+        condition.signal();
     }
 
 }

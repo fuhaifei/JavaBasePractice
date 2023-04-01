@@ -46,11 +46,12 @@ import java.util.concurrent.locks.ReentrantLock;
  *         while (isAlive()) {
  *            wait(0);
  *         }
- * 3. park() 和 unPark 控制线程的执行和暂停
+ * 3. LockSupport: park() 和 unPark 控制线程的执行和暂停
  *  * 每个线程绑定一个Parker对象包括_counter， _cond和 _mutex
- *  * park() 判断_counter > 0， 若等于0则等待，否则执行并_counter  - 1
- *  * unpark() 方法给 Math.min(_counter + 1,1)
- *  * 由park()导致的暂停为waiting/time_waiting状态,interrupted()方法会打断暂停，抛出中断异常
+ *      * park() 判断_counter > 0， 若等于0则等待，否则执行并_counter  - 1
+ *      * unpark() 方法给 Math.min(_counter + 1,1)
+ *  * 由park()导致的暂停为waiting/time_waiting状态
+ *  * interrupted()方法会打断暂停（底层调用unPark()）,并将interrupt标志设置为true,park()方法在interrupt为true的情况下不会赞同
  * 4. ReentrantLock 支持可重入/超时/打断/公平锁
  *  * tryLock(long timeout, TimeUnit unit):获取锁，等待timeout时间自动退出
  *  * lockInterruptibly():可中断锁
@@ -172,6 +173,27 @@ public class LockTest {
         }
         System.out.println("执行完毕，获得执行结果");
         LockSupport.unpark(t1);
+        Thread.sleep(1000);
+    }
+    /***
+     *  测试lockSupport被中断
+     */
+
+    @Test
+    public void testPark2() throws InterruptedException {
+        Thread t1 = new Thread(() ->{
+            LockSupport.park();
+            System.out.println(Thread.currentThread().isInterrupted());
+            LockSupport.park();
+            System.out.println(Thread.currentThread().isInterrupted());
+        });
+        t1.start();
+        Thread.sleep(1000);
+        synchronized (lockObject){
+            num = 100;
+        }
+        System.out.println("执行完毕，获得执行结果");
+        t1.interrupt();
         Thread.sleep(1000);
     }
 
