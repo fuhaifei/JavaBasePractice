@@ -423,7 +423,6 @@ public class ThreadTest {
                 throw new RuntimeException(e);
             }
         });
-
         return left.get() + right.get();
     }
 

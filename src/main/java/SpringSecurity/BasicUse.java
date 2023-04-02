@@ -44,11 +44,11 @@ package SpringSecurity;
  *      * 构建UserDetail对象(用户名/密码/角色信息)—>访问数据库，查询用户表和role表
  *  * 自定义登录方法
  *      * config类中注入authenticationManager
- *      * 生成UsernamePasswordAuthenticationToken对象，调用authenticationManagerauthenticate验证用户信息
+ *      * 生成UsernamePasswordAuthenticationToken对象，调用authenticationManager.authenticate验证用户信息
  *      * 验证成功后，将用户信息存放在缓存中后 + 将authentication对象存放在SecurityContextHolder.getContext().setAuthentication()
  *      * 生成JWT Token写入到响应体返回给用户
  *  * 自定义JetAuthenticationTokenFilter
- *      * 从请求中获取JWT token,解析得到其中的登录账号，账号不为空时从缓存中获取用户信息
+ *      * 从请求中获取JWT token,解析得到其中的登录账号
  *      * 若用户信息不为空，则生成UsernamePasswordAuthenticationToken，设置authentication()完成授权
  *      * .addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class) 配置文件中添加到表单
  *        表单登录过滤器之前
@@ -94,7 +94,7 @@ package SpringSecurity;
  *                  Access-Control-Allow-Headers        预检请求后，告知发送请求需要有的头部
  *                  Access-Control-Allow-Credentials        表示是否允许发送cookie，默认false；
  *                  Access-Control-Max-Age       本次预检的有效期，单位：秒；
- *      * Java中基于CROS的实现方案
+ *      * Java中基于CORS的实现方案
  *          1. @CrossOrigin 注解当修饰类时，表示此类中的所有接口都可以跨域；当修饰方法时，表示此方法可以跨域
  *              * 问题是支支持局部方法（某个controller或者controller的一个方法）
  *              * 基于interceptor实现
@@ -112,7 +112,55 @@ package SpringSecurity;
  *                  .antMatchers(HttpMethod.OPTIONS).permitAll()
  *              * 2. 在SpringSecurity开启跨域支持(传入配置类)
  *                  .cors().configurationSource(corsConfigurationSource())
+ *  项目功能点实现总结
+ *  1. 登录
+ *      * 提供"/login"方法，实现基于表单的的登录
+ *          * 调用CustomUserDetailsService implements UserDetailsService
+ *              * 用户名对应对象中的principal属性，而密码对应credentials属性
+ *              * 如果密码错误，返回登陆失败(401 UnAuthorized (用户名不存在/登录失败))
+ *              * 如果密码正确，生成JWT token，其中JWT token存放信息包括：
+ *                  * 用户id:userID
+ *                  * 超时时间：exp（unix时间戳）
+ *          * Authentication对象存储在SecurityContext中.
+ *          * 若有效查询用户角色信息，以列表类型键值对存储在redis中
+ *              * key: auth:userrole:userid value:list[role_id]
+ *              * 超时时间等于jwt token超时时间
+ *          * 返回JWT token给用户
+ *      * 自定义了一个filter实现了OncePerRequestFilter,添加到了spring登录鉴权过滤器链中，该过滤器负责检查请求中是否存在token
+ *          * 获取请求头中Authorization字段中的JWT token,校验token有效性，以及token是否超时
+ *              * 解析成功，初始化Authentication设置到SecurityContext中
+ *                  * 判断JWT_Token是否即将过期（<3分钟），重新生成新的Token,更新过期时间
+ *              * 若解析失败/超时，直接进入下一个过滤器
+ *                  * 如果为permitAll则会进入AnonymousAuthenticationFilter赋予一个匿名验证身份
+ *          * 进入下一个过滤器AnonymousAuthenticationFilter
+ * 2. 鉴权(FilterSecurityInterceptor)
+ *      * AccessDecisionManager 根据权限配置信息进行投票
+ *          * 三个实现类（AffirmativeBased 一票通过，UnanimousBased 一票否决，ConsensusBased 少数服从多数）
+ *          * 默认的配置文件过滤器（WebExpressionVoter）
+ *      * 自定义自动鉴权投票器（AccessDecisionProcessor implements AccessDecisionVoter<FilterInvocation>）
+ *          * 实现vote方法
+ *              * 首先查询redis缓存（auth:urlrole:url），是否存在当前URL的可访问角色列表
+ *              * 存在直接返回，否则数据库查询并更新缓存（过期时间为5分钟）
+ *          * 判断当前用户的角色列表是否在url可访问角色列表之中/URL角色列表为ALL
+ *              * 存在/URL无角色则投出同意票
+ *              * 否则投出反对票
+ *     * UnanimousBased(WebExpressionVoter + 自定义动态鉴权Votoer)
+ * 3. 未登录/鉴权失败（ExceptionTranslationFilter）
+ *      * AuthenticationException认证异常 -> AuthenticationEntryPoint： 401: Unauthorized
+ *      * AccessDeniedException访问异常 -> AccessDeniedHandler:         403: Forbidden
  *
+ * 4. 基于RabbitMQ的异步调用
+ *      * 涉及到生成模型的在线调用，而模型调用往往需要15-20分钟的推理时间，且调用分不同阶段有多个返回结果
+ *      * 采用RabbitMQ实现接口的异步调用返回
+ *          * 后端接收到调用请求->将请求写入到RabbitMQ中(generate:userID:ip:timestamp)
+ *            ->python消费监听队列,执行模型推理->阶段结果写入到返回队列中
+ *            -> java后端监听对应消息,读取返回结果，并写入数据库
+ *          * 前端可查询到各阶段结果输出时间
+ * 5. 基于Spring AOP+Redis实现接口限流
+ *      * 目标：一个小时最多调用三次接口，否则python模型推理会出现爆内存的问题
+ *      * 自定义注解（@VisitLimit(frequency=15, duration, msg)）+AOP注解扫描
+ *      * Redis Key(APIcalllimit:url),第一次调用设置超时时间为duration,之后每次调用frequency+1,直到键超时/次数=15
+ *      * 为了避免并发问题，使用lua脚本基于cas机制实现自增
  * */
 
 public class BasicUse {
