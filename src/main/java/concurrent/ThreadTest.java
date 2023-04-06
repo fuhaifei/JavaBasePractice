@@ -315,7 +315,7 @@ public class ThreadTest {
         Executors.newScheduledThreadPool(1);
         Executors.newSingleThreadExecutor();
         Executors.newFixedThreadPool(10) ;
-        Executors.newCachedThreadPool();
+        ExecutorService executorService = Executors.newCachedThreadPool();
     }
 
     /**
