@@ -161,7 +161,6 @@ package SpringSecurity;
  *      * 自定义注解（@VisitLimit(frequency=15, duration, msg)）+AOP注解扫描
  *      * Redis Key(APIcalllimit:url),第一次调用设置超时时间为duration,之后每次调用frequency+1,直到键超时/次数=15
  *      * 为了避免并发问题，使用lua脚本基于cas机制实现自增
- *
  * 6. 后端存储密码的加密方式
  *      1. Hash对密码进行加密：MD5，SHA-1,SHA-256
  *          * 单向加密算法，加密后无法还原为原始密码
