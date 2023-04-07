@@ -161,6 +161,25 @@ package SpringSecurity;
  *      * 自定义注解（@VisitLimit(frequency=15, duration, msg)）+AOP注解扫描
  *      * Redis Key(APIcalllimit:url),第一次调用设置超时时间为duration,之后每次调用frequency+1,直到键超时/次数=15
  *      * 为了避免并发问题，使用lua脚本基于cas机制实现自增
+ *
+ * 6. 后端存储密码的加密方式
+ *      1. Hash对密码进行加密：MD5，SHA-1,SHA-256
+ *          * 单向加密算法，加密后无法还原为原始密码
+ *          * 攻击方法：穷举法（遍历所有密码组合）/字典攻击法（构建明文->密文的映射）/彩虹表攻击方法
+ *          （改进的字典攻击法，用来破解固定且字符范围固）
+ *          * 改进：加盐的加密算法
+ *              * 对每个用户密码添加一个固定字符或者随机字符串（salt），使得上述攻击方法失效
+ *          * 改进：Bcrypt算法（相同明文，每次生成的密文均不相同 + 慢哈希算法 + Bcrypt加密长度为60位）
+ *      2. 对称加密算法
+ *          * DES算法（56/64）
+ *          * AES算法（128/192/256）
+ *          * PBE算法：由于上述两个加密算法需要密钥为固定长度，PBE类似与加盐的方法
+ *      3. 非对称加密算法
+ *          * RSA
+ *      5. 数字签名算法
+ *          * MD5withRSA
+ *          * SHA1withRSA
+ *          * SHA256withRSA
  * */
 
 public class BasicUse {
