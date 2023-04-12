@@ -75,5 +75,6 @@ import java.io.*;
  *                当后台处理完成，操作系统会通知相应的线程进行后续的操作
  * */
 public class BasicUse {
-
+    public static void main(String[] args) throws IOException {
+    }
 }
