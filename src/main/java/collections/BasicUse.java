@@ -89,7 +89,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  *      * concurrent下的线程安全集合类
  *          * Blockingxxx
  *          * CopyOnWriteXXX
- *          * cONCURRENTxxx
+ *          * CONCURRENTxxx
  *      * ConcurrentHashMap：
  *          * JDK1.7实现：ConcurrentHashMap 把哈希桶数组切分成小数组（Segment ），每个小数组有 n 个 HashEntry 组成。
  *              * 创建默认创建16个Segment
@@ -103,7 +103,14 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  *              * get() 无锁操作，若get获得的是ForwardingNode，则在新表中进行搜索
  *              * size() 元素个数统计类似于ADDER基于cell的实现，无竞争向baseCount添加，有竞争向cell累加
  *              * treeify()/untreeify() 基于synchronized锁住链表头
- *
+ * 5. 集合类的fast-fail机制
+ *     * 在用for遍历一个集合对象时，如果遍历过程中对集合对象的内容进行了修改（增加、删除），则会抛出ConcurrentModificationException。
+ *     *  集合类维护一个modCount属性，操作前记录当前的modCount，遍历时每次遍历比较当前modCount是否发生变化，发生变化则抛出异常
+ *          final void checkForComodification() {
+ *             if (modCount != expectedModCount)
+ *                 throw new ConcurrentModificationException();
+ *         }
+ *    * modCount记录的是某个List改变大小的次数
  *
  * */
 public class BasicUse {

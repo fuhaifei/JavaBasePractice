@@ -1,3 +1,4 @@
+import org.junit.Test;
 
 /**
  * Java基础概念
@@ -30,6 +31,17 @@
  *          * 面向切面编程(AOP)是一种基于面向对象编程(OOP)的编程思想，它是OOP的一种补充和完善。它所面对的是处理过程中的某个步骤或阶段,
  *            强调的是在“哪里做”和“何时做”
  *              * AOP的四个概念：Aspect/Joint Point/Point Cut/Advice
+ * 4. 抽象类和接口
+ *      * 抽象类=抽象方法（可有可无）+普通方法（可有可无），抽象类无法创建实例，其子类只有实现所有抽象方法后才能成为普通类，否则仍为抽象类
+ *          * 一部分功能是确定实现的，另一部分功能需要根据子类的逻辑进行实现
+ *          * abstract 无法修饰私有方法
+ *      * 接口 = jdk8.0之前 静态常量（static final） + 抽象方法 ->jdk8.0: default修饰的公共默认方法+ 公共静态方法 -> jdk9.0：增加了私有方法
+ *          * 接口无成员变量，无构造函数
+ *          * 类实现接口：必须重写接口中的抽象方法+可选重写接口中的默认方法，静态方法不能被继承也不能被重写
+ *          * 接口与抽象类的最大区别就是接口支持多继承（接口可继承多个接口，类可实现多个类）
+ *      * 接口多继承导致的冲突问题：
+ *          * 方法冲突：1.类优先原则 2.重名方法若返回值不同，则直接报错 3.多个接口default方法冲突，则强制实现类重写该方法
+ *          * 属性冲突：调用时必须指明父接口名称/父类名称
  * Redis八股补充
  * 1. Redis 热Key问题和大Key问题
  *      * 热点Key: 在某些业务场景中，大量的请求访问同一个key，导致流量过于集中，例如热门的商品信息、热门话题等
@@ -62,12 +74,8 @@
  *      * redis采用：周期性回收+惰性回收
  * */
 public class Basic {
-    public final String name;
-    public final int number;
 
-    public Basic(String name, int number) {
-        this.name = name;
-        this.number = number;
+    public Basic() {
     }
 
     public class BasicInner{
@@ -85,5 +93,40 @@ public class Basic {
         private  String getAge(){
             return "nb";
         }
+    }
+
+    public interface Foo {
+        int x = 1;
+        int y = 1;
+        default void doThat() {
+            System.out.println("nFoo");
+        }
+    }
+    public class Bar {
+        int x = 2;
+        public void doThat() {
+            System.out.println("nBar");
+        }
+    }
+
+    public class FooBar extends Bar implements Foo {
+
+        public void doThat() {
+            Foo.super.doThat();
+            System.out.println(y);
+        }
+    }
+
+    enum TestEnum {
+        Num1, Num2, Num3, Num4;
+
+    }
+
+    @Test
+    public void TestEnum(){
+        TestEnum num1 = TestEnum.Num1;
+        TestEnum num11 = TestEnum.valueOf("Num1");
+        System.out.println(num1);
+        System.out.println(num11);
     }
 }
