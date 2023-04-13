@@ -84,14 +84,37 @@
  *           * 并行复制指的是SQL线程从单线程->多线程
  *               * SQL线程将任务分发给多个Worker线程，由Woker线程并发执行任务
  *               * 5.6：按库的并行/5.7 基于组提交
- * 2. Binlog 和 redo log 一致性问题
+ * 2. 对于一个慢查询你将如何入手
+ *     * Explain查看Sql执行计划
+ *          * type: 是否使用了索引：index/all
+ *              * 索引失效：sql编写是否存在问题（最左匹配原则，计算属性，索引覆盖）
+ *              * 优化器优化：次级索引区分度问题,覆盖索引（若查询问题，不如删除索引；若区分度问题，增加索引长度）
+ *          * 查看有排序操作 extra 中是否由file sort
+ *              * 无索引+索引,顺序不一致则判断是否能够修改查询顺序
+ *          * 查看是否由复杂表连接操作（ref或者eq_ref）
+ *              * 判断join_buffer_size是否过小导致了多次表扫描
+ *              * 建立索引加快连接过程
+ *          * gruop by/order by （Using temporary Using filesort）
+ *              * sort_buffer_size过小，导致磁盘临时文件排序
+ *              * tmp_table_size过小，导致临时表需要写入磁盘
+ *     * 首先通过show profiling查看详细执行时间
+ *          * sending data
+ *          * Creating tmp table/Copying to tmp table on disk
+ *          * locked
+ * 3. Mysql不同隔离级别如何实现
+ *    * 读未提交：当前读+行锁
+ *    * 读已提交：MVVC读（每个读一个readview）+ 行锁
+ *    * 可重复读：MVVC读（一个事务一个readview） + 行锁
+ *    * 顺序一致性：表级共享锁读+表级排他锁
+ * 分布式理论补充
+ * 1. Binlog 和 redo log 一致性问题
  *      * redo log持久化成功，binlog失败，会导致主从状态不一致，当主节点失效，从节点成为新的主时会出现幻读问题
  *      * Mysql通过两阶段提交实现 binlog和redo log的一致性持久化，保证了事务同时存在于存储引擎和binlog中
  *          * prepare阶段：获取prepare_commit_mutex锁，生成xid以及redo持久化和undo日志，将事务状态设置为TRX_PREPARED
  *          * 记录binlog日志，并将binlog持久化（sync_binlog）
  *          * 调用引擎提交事务 commit
  *      * 事务回滚还是提交有binlog日志中的xid_log_event决定
- * 3. binlog 与 redo log 顺序一致性的问题
+ * 2. binlog 与 redo log 顺序一致性的问题
  *      * 为了保证并发情况下，bin log 和 redo log刷盘顺序相同，Mysql5.6之前使用prepare_commit_mutex，只有上一个事务释放锁之后
  *        下一个事务才能够继续宁prepare操作
  *      * 为了解决每个事务获取一次锁/刷盘两次的操作，MySQL 5.6引入了BLGC（Binary Log Group Commit）组提交技术
@@ -99,10 +122,10 @@
  *          * 提交过程分为三个阶段
  *              * flush stage: 获取lock_log mutex, 将队列中所有事务的binlog按顺序写入内存
  *              * sync stage: 释放lock_log mutex,获取lock_sync mutex, 落盘
- *              * Commit stage: 释放lock_sync mutex锁，获取Lock_commit mutex，按照队列顺序提交队列中的事务，唤醒对应线程
+ *              * commit stage: 释放lock_sync mutex锁，获取Lock_commit mutex，按照队列顺序提交队列中的事务，唤醒对应线程
  *           * 控制参数为：binlog_max_flush_queue_time：在flush阶段等待的时间，默认为0，时间越长意味着队列越长
  *                      等待binlog_group_commit_sync_delay毫秒直到达到binlog_group_commit_sync_no_delay_count
- * 4. follower read 如何保证一致性
+ * 3. follower read 如何保证一致性
  *      1. read index:
  *          * leader在响应读请求前需要首先确定自己是否认为leader(通过多数节点心跳)
  *          * follower向leader查询commitIndex, 若commitIndex > applyIndex，则副本等待日志应用到对应index后再响应用户请求（TiKV）
@@ -110,7 +133,7 @@
  *          * leader在选举成功后维护一个lease,在当前lease内认为不会有其他的leader出现（即自己不会被取代）
  *          * lease < election_timeout
  *          * 当从节点请求read index时，若当前在lease期限内，则不需要再通过心跳消息确认自身为leader
- * 3. BASE理论
+ * 5. BASE理论
  *      * 对于CAP理论的弱化，通过妥协一定程度的一致性，提供一定程度的可用性
  *      * 主要概念
  *          （1）Basically Available：提供一定程度的可用性
