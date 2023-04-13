@@ -1,3 +1,5 @@
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * Java基础概念
@@ -109,5 +111,6 @@ public class Basic {
         private  String getAge(){
             return "nb";
         }
+        Deque
     }
 }
