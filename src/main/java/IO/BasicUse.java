@@ -76,5 +76,6 @@ import java.io.*;
  * */
 public class BasicUse {
     public static void main(String[] args) throws IOException {
+        BufferedInputStream bf = new BufferedInputStream(new FileInputStream(new File("abc.txt")));
     }
 }
