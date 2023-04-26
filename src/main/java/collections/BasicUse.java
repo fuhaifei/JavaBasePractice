@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
 
 /**
  * Java集合框架总结
@@ -170,5 +171,45 @@ public class BasicUse {
         Deque<Integer> deque = new ArrayDeque<>();
         deque.offer(1);
         System.out.println(deque.poll());
+    }
+
+    private class Teacher{
+        String name;
+        int age;
+
+        public Teacher(String name, int age){
+            this.name = name;
+            this.age = age;
+        }
+
+        @Override
+        public String toString() {
+            return "Teacher{" +
+                    "name='" + name + '\'' +
+                    ", age=" + age +
+                    '}';
+        }
+    }
+
+    //测试JDK8中的stream() API
+    @Test
+    public void testStream(){
+        List<Teacher> testList = new ArrayList<>();
+        testList.add(new Teacher("张三", 10));
+        testList.add(new Teacher("李四", 100));
+        testList.add(new Teacher("王五", 100));
+        testList.add(new Teacher("赵六", 100));
+        testList.add(new Teacher("马七", 100));
+
+        //映射操作
+        List<Teacher> list = testList.stream().peek(teacher -> {
+           if(teacher.name.equals("张三")){
+               teacher.age++;
+           }
+        }).toList();
+
+        System.out.println(testList);
+
+        System.out.println(list);
     }
 }

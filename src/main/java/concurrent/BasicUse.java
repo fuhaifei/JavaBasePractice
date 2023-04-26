@@ -195,6 +195,11 @@ import java.util.concurrent.locks.*;
  *                                  whenCompleteAsync(BiConsumer<? super T,? super Throwable> action, Executor executor)
  *                  * 线程间的配合方法：thenAcceptBoth(), runAfterBoth(),runAfterEither(),thenCombine(),thenCompose()\
  *                  * 获取结果/处理异常：exceptionally(),getNow(T valueIfAbsent),complete(T value)
+ * 19. 如何确定Java线程池的线程数量
+ *     * java并发编程实践：    thread_number = (cpu_number * utility * (1 + wait / compute))
+ *     * java虚拟机并发编程：   thread_number =  cpu_number / (1 - 阻塞系数) 阻塞系数为  阻塞时间/（阻塞时间+计算时间）
+ *     * 对于CPU计算密集型的任务，线程数量可以设置为CPU数量+1，额外的一个线程在其他线程由于缺页错误等阻塞时，可以继续执行
+ *     * 对于IO密集型任务，线程池线程数量根据阻塞时间和任务执行时间的比值确定，通常可是设置为CPU数量的两倍
  * */
 public class BasicUse {
     /**
