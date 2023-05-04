@@ -11,7 +11,7 @@ import java.util.*;
  * 泛型（Generics）：在定义类、接口、方法时候，通过一个标识符标示类的属性或者方法的参数/返回值等，在使用时确定实际的类型（类型的占位符）
  * 1. JDK1.5之前基于Object实现容器的泛型接纳，存在类型强制转换、类型不安全等问题，JDK1.5之后通过泛型，实现隐式的自动类型转化，并根据分型类型
  *    在编译时检查类型安全
- * 2. 若使用泛型时不指定泛型，则自动将泛型填充为Object类型或者对于有限定的泛型例如< T exnteds XClass >，转化为XClass类型
+ * 2. 若使用泛型时不指定泛型，则自动将泛型填充为Object类型或者对于有限定的泛型例如< T extends XClass >，转化为XClass类型
  * 3. 泛型擦除：当编译器对带有泛型的java代码进行编译时，它会去执行类型检查和类型推断，然后生成普通的不带泛型的字节码，实际上同一个的类的不同泛型最终指只加载一个Class类对象。
  *    例如List<String> 和 List<Integer>->List//编译不通过，已经存在形同方法签名
  *        void m(List<String> numbers){}
@@ -106,7 +106,7 @@ public class BasicUse {
 
 
     @Test
-    public static void testArray(String[] args) {
+    public void testArray() {
         //1.java数组是协变的
         Object[] father = new String[5];
         //2.泛型是不可变的:List<Object> fatherType = new ArrayList<String>();
