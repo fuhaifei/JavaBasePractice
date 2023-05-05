@@ -95,6 +95,7 @@ package jvm;
  *              * 4.并发清理：不需要STW，遍历老年代空间，清理可回收对象，重置CMS收集器的数据结构，等待下一次回收
  *          * 问题：采用标记清理算法导致大量内存碎片；GC线程并发降低吞吐量；浮动垃圾，并发清理过程中伴随着垃圾的增加只能等到下一次垃圾回收
  *              (jdk5 68%, jdk6 92%)
+ *          * CMS维护一个老年代到新生代的cardtable, 将所有新生代对象加入CG Roots解决跨代引用问题
  *       * Garbage First(G1):停顿时间可控的低延迟垃圾收集器,JDK9 的时候成为了服务端模式下的默认垃圾收集器
  *          * 将堆区域花费为多个大小相同的区域（Region）,每一个Region都可以根据运行情况的需要，扮演Eden、Survivor、老年代区域、或者Humongous区域
  *          * 大对象会存放到多个连续的Humongous区域，G1大多数情况下会把这个区域当作老年代来看待
@@ -129,8 +130,38 @@ package jvm;
  *            * 为一个对象设置虚引用关联的唯一目的就是能在这个对象被收集器回收时收到一个系统通知。
  *            * ReferenceQueue phantomQueue = new ReferenceQueue();
  *            * PhantomReference<Object> sf = new PhantomReference<>(obj, phantomQueue);
+ * 9. CGRoots：可达性分析中的根节点
+ *      * 由系统类加载器加载的对象
+ *      * 线程相关变量：线程/栈中的对象
+ *      * 本地方法调用相关对象：JNI栈中对象和全局对象
+ *      * 用于同步的锁对象
+ *      * JVM本身持有的对象：类加载器，重要的异常类，处理异常的与分配对象
+ * 10. JAVA程序内存泄露分析
+ *      * 使用到的相关工具
+ *          * pmap：显示进程的内存映像，linux命令
+ *          * NMT（Native Memory Tracking）用来跟踪 JVM 本地内存分配情况
+ *              * 通过命令开启：-XX:NativeMemoryTracking=off|summary|detail
+ *              * jmcd命令：查看当前JMV各个内存区域占用空间大小（堆/线程/GC/代码缓存/）
+ *              * baseline summary.differ 查看一段时间的内存变化
+ *          * jps：查看当前服务器运行的java程序（pid，jar包名称等）
+ *          * jmap（Java Virtual Machine Memory Map）JDK提供的一个可以生成Java虚拟机的堆转储快照dump文件的命令行工具
+ *              * jmap [optins] pid包括：
+ *                  -heap 查看当前堆信息（垃圾回收/配置/内存空间使用）
+ *                  -histo[:live] 显示堆中对象的统计信息
+ *              * -dump:[live,]format=b,file= 生成Java虚拟机的堆转储快照dump文件
+ *          * jstat：对Heap size和垃圾回收状况的监控
+ *          * jstack:jvm中当前所有线程的运行情况和线程当前状态
+ *       * 基本思路为
+ *          * top命令查看当前占用内存空间较高的应用程序(pid)
+ *          * jmap 获得当前堆内存使用情况，如果堆内存
+ * 11. 永久代被替代的原因
+ *     * JVM加载类的方法的大小很难确定-永久代启动时即确定大小，导致永久代容易出现OOM问题
+ *     * 元空间是存储在本地内存里面，内存上限比较大，可以很好的避免这个问题
+ *     * 永久代对象通过FullGC和老年代同时进行垃圾回收，专于i到原空间后，简化了full GCd的逻辑
+ *     * Oracle合并Hotspot和JRockit的代码，JRockit没有永久代
+ *     * HotSpot的内部类型也是Java对象不应该对用户透明
  *
- * 7. 八股问题
+ * 补充：八股问题
  *    * 设置停顿时间的参数是什么？
  *          * -XX:MaxGCPauseMillis 默认值是 200 毫秒
  *    * G1收集器是怎么保证停顿时间可控的？

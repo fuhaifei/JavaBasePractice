@@ -13,7 +13,7 @@ package jvm;
  *      * HotSpot: Sun/Oracle JDK和openJDK的默认虚拟机
  *      * JRockit: 不包含解析器实现，即时编译器编译后执行（速度快，启动慢）
  *      * Micorsoft jvm.JVM/Taobao jvm.JVM/Dalvik VM/Graal VM
- *  4. jvm.JVM/JDK/JRE/OpenJDK之间的区别
+ *  4. jvm.JVM/JDK/JRE/OpenJDK 之间的区别
  *      * jvm.JVM：用来运行编译后的Java字节码的虚拟机（.class）
  *      * JRE：运行基于Java编写程序的运行环境，用于解释执行Java的字节码文件（jvm.JVM+运行类库）
  *      * JDK：运行环境（JDK）+开发环境（compiler和debugger）
