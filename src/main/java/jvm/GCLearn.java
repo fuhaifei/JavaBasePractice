@@ -1,5 +1,10 @@
 package jvm;
 
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * JVM垃圾回收相关知识总结
  * 1. 基础总结
@@ -60,7 +65,11 @@ package jvm;
  *              * 基础还是标记清除/复制算法
  *       * 分区算法：将整个堆空间划分成连续的不同小区间。每一个小区间都独立使用，独立回收
  * 4. JVM GC执行的时机
- *      * 当程序创建一个新的对象或者基本类型的数据，内存空间不足时，会触发GC的执行
+ *      * 创建对象时首先分配到Elden区中，若Elden区空间不足，则执行一次young GC（Elden+s0存活对象移动到s1中）
+ *      * young GC发现Survivor中无法存放移动来的对象，通过分配担保机制提前移动到老年代中
+ *      * 分配担保机制：若 老年代连续空间大小>新生代对象总大小/历次晋升平均大小，则正常进行Young GC。否则直接进行full GC
+ *      * full GC后发现空间仍然无法存储全部对象，抛出：java.lang.OutOfMemoryError: Java heap space
+ *      * 其他时机：大对象直接存储在老年代；年龄超过上限的对象在GC过程中移动到老年代
  * 5. 跨代引用的问题
  *      * 新生代对象可能会被老年代对象所引用，新生代触发GC时，只扫描牺牲带区域不够
  *      * Java定义了名为记忆集的抽象数据结构，用于记录存在跨区域引用的对象指针集合
@@ -96,6 +105,10 @@ package jvm;
  *          * 问题：采用标记清理算法导致大量内存碎片；GC线程并发降低吞吐量；浮动垃圾，并发清理过程中伴随着垃圾的增加只能等到下一次垃圾回收
  *              (jdk5 68%, jdk6 92%)
  *          * CMS维护一个老年代到新生代的cardtable, 将所有新生代对象加入CG Roots解决跨代引用问题
+ *          * CMS的逻辑
+ *              * 当老年代达到预先设定的存储空间阈值(jdk5 68%, jdk6 92%)是，触发Major GC
+ *              * 当出现 concurrent promotion failed（空间分配担保机制下空间不足） 或者 concurrent mode failure（并发标记空间）
+ *                触发Full GC(Serial Old GC)
  *       * Garbage First(G1):停顿时间可控的低延迟垃圾收集器,JDK9 的时候成为了服务端模式下的默认垃圾收集器
  *          * 将堆区域花费为多个大小相同的区域（Region）,每一个Region都可以根据运行情况的需要，扮演Eden、Survivor、老年代区域、或者Humongous区域
  *          * 大对象会存放到多个连续的Humongous区域，G1大多数情况下会把这个区域当作老年代来看待
@@ -111,6 +124,12 @@ package jvm;
  *              * 4. Full GC(可选)：如果上述方式不能正常工作，G1会停止应用程序的执行（Stop-The-World），使用单线程的内存回收算法进行垃圾回收
  *                  计算出各个Region的回收价值和成本，再根据用户期望的停顿时间来决定要回收多少个Region
  *              * 回收采用标记复制算法
+ *        * G1的逻辑
+ *              * Elden区满了触发young GC
+ *              * VM已使用内存/总内存”的比例超过设定阈值IHOP（InitiatingHeapOccupancyPercent）后，
+ *                  G1会执行一次Concurrent Marking Cycle,阶段2并发标记阶段并发标记
+ *              * 之后执行多轮的Mixed GC(年轻代和老年代Region回收)：为了满足所谓的暂停时间可控
+ *              * Concurrent Mode Failure时通过Serial Old实现Full GC
  * 7. 安全点（Safepoint）和安全区域(SafeRegion)
  *      * 程序执行时并非在所有地方都能停顿下来开始GC，只有在特定的位置才能停顿下来开始GC，这些位置称为"安全点"
  *      * 如果太少可能导致GC等待的时间太长，如果太频繁可能导致运行时的性能问题,大部分指令的执行时间都非常短暂，
@@ -160,7 +179,17 @@ package jvm;
  *     * 永久代对象通过FullGC和老年代同时进行垃圾回收，专于i到原空间后，简化了full GCd的逻辑
  *     * Oracle合并Hotspot和JRockit的代码，JRockit没有永久代
  *     * HotSpot的内部类型也是Java对象不应该对用户透明
- *
+ * 12. 可达性分析：三色标记法
+ *     * 定义：标记的过程就是节点颜色从白色->灰色->黑色的遍历过程
+ *          * 白色：未被垃圾回收器访问过的对象。
+ *          * 黑色：已经被访问过且所有引用均被扫描。
+ *          * 灰色：已被访问但还未扫描全部引用
+ *     * 并发情况下可能出现的问题
+ *          * 消亡对象背标记为存活-可接受
+ *          * 存活对象被标记为消亡-不可接受
+ *     * 导致出现问题二的两个充分必要条件：
+ *          * 增加黑色->白色的引用 对应解决方案：CMS采用增量更新，记录增加的引用在二次扫描中重新扫描
+ *          * 删除灰色->白色的引用 对应解决方案：G1则采用原始快照（SATB），记录原始快照和删除的引用，再次扫描中处理
  * 补充：八股问题
  *    * 设置停顿时间的参数是什么？
  *          * -XX:MaxGCPauseMillis 默认值是 200 毫秒
@@ -173,4 +202,78 @@ package jvm;
  * */
 
 public class GCLearn {
+
+    private static class TestClass{
+
+    }
+
+    public static void main(String[] args) {
+        testPromotion();
+    }
+
+    /*
+     * 测试新生代minorGC:对象优先在Elden区分配，若Elden区空间不足，则执行一次young GC
+     * 测试参数:-verbose:gc -Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:SurvivorRatio=8
+     * //jdk9及以后 -verbose:gc -Xms20M -Xmx20M -Xmn10M -Xlog:gc+heap=debug -XX:SurvivorRatio=8
+     * 测试结果：发生了一次young gc，将Eden regions内存放到Survivor中
+     * */
+    public static void testMinorGc(){
+        byte[] allocOne = new byte[2 * 1024 * 1024];
+        byte[] allocTwo = new byte[2 * 1024 * 1024];
+        byte[] allocThree = new byte[2 * 1024 * 1024];
+        byte[] allocFour = new byte[4 * 1024 * 1024];
+    }
+
+    /*
+    * 大对象会直接进入老年代
+    * 测试参数：-verbose:gc -Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:SurvivorRatio=8 -XX:PretenureSizeThreshold=3145728
+    * 测试结果：看不明白GC日志
+    * */
+    public static void testLargeObject(){
+        byte[] allocFour = new byte[11 * 1024 * 1024];
+    }
+
+    /*
+    * 长期存储对象会进入老年代
+    * 测试参数：-verbose:gc -Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=1
+    * */
+    public static void testAgeGc(){
+        byte[] allocOne = new byte[512 * 1024];
+        byte[] allocTwo = new byte[4 * 1024 * 1024];
+        byte[] allocThree = new byte[4 * 1024 * 1024];
+        allocThree = null;
+        byte[] allocFour = new byte[4 * 1024 * 1024];
+    }
+
+    /*
+     * 动态年龄判断:当Survivor空间中低于或者等于某年龄的所有对象大小综合大于Survivor空间的一半，大于该年龄的对象可以直接进入老年代
+     * 测试参数：-verbose:gc -Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=15
+     * */
+    public static void testDynamicGc(){
+        byte[] allocOne = new byte[256 * 1024];
+        byte[] allocTwo = new byte[256 * 1024];
+        byte[] allocThree = new byte[4 * 1024 * 1024];
+        byte[] allocFour = new byte[4 * 1024 * 1024];
+        allocThree = null;
+        byte[] allocFive = new byte[4 * 1024 * 1024];
+    }
+
+    /*
+     * 空间分配担保机制：老年代连续空间大小>新生代对象总大小/历次晋升平均大小，即进行minor GC否则进行full GC
+     * 测试参数：-verbose:gc -Xms10M -Xmx10M -Xmn5M -XX:+PrintGCDetails -XX:SurvivorRatio=8
+     * */
+    public static void testPromotion(){
+        byte[] allocOne = new byte[1 * 1024 * 1024];
+        byte[] allocTwo = new byte[1 * 1024 * 1024];
+        byte[] allocThree = new byte[1 * 1024 * 1024];
+        allocOne = null;
+        byte[] allocFour = new byte[1 * 1024 * 1024];
+        byte[] allocFive = new byte[1 * 1024 * 1024];
+        byte[] allocSix = new byte[1 * 1024 * 1024];
+        allocFive = null;
+        allocFour = null;
+        allocSix = null;
+        byte[] allocSeven = new byte[1 * 1024 * 1024];
+    }
+
 }

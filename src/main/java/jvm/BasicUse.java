@@ -1,5 +1,10 @@
 package jvm;
 
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.util.Iterator;
+import java.util.ServiceLoader;
+
 /**
  * 1.  JVM基于栈指令集
  *      * 基于栈的指令集架构：    以零地址指令集为主，操作过程只依赖于操作栈，指令集小，编译器容易实现
@@ -19,8 +24,21 @@ package jvm;
  *      * JDK：运行环境（JDK）+开发环境（compiler和debugger）
  *      * OpenJDK: 开源的JDK版本，也是OracleJDK的基础，两者之间没有显著的区别（deployment code）
  *      * From Java 11 forward, therefore, Oracle JDK builds and OpenJDK builds will be essentially identical.
+ *  5. Java SPI机制
+ *      * Service Provider interface，由JDK定义服务的接口，服务提供厂商提供服务的实现
+ *      * 核心类为ServiceLoader,具体实现加载的逻辑代码如下:
+ *         ServiceLoader<Service> load = ServiceLoader.load(Service.class);
+           Iterator<Service> iterator = load.iterator();
+           while (iterator.hasNext()){
+                Registry Service = iterator.next();
+           }
+        * 第一行传入线程上下文加载器（默认为AppClassLoader），构造serviceloader对象
+        * serviceloader的内部serviceloader，扫描"META-INF/services/"文件，确定需要啊加载的实现类
+ *      * next（）方法不断通过反射加载对应实现类，通过反射机制创建对象
 
  * */
 
 public class BasicUse {
+    ServiceLoader<Driver> loadedDrivers = ServiceLoader.load(Driver.class);
+    Iterator<Driver> driversIterator = loadedDrivers.iterator();
 }
