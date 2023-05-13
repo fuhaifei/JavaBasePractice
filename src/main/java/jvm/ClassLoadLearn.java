@@ -41,11 +41,26 @@ import java.io.FileNotFoundException;
  *          * clazz.getClassLoader(): 每个class对象提供加载其的类加载器
  *          * Thread.currentThread().getContextClassLoader(): 获得当前线程上下文的ClassLoader
  *          * ClassLoader.getSystemClassLoader(): 获得系统ClassLoader
- *
  * 5. 双亲委派原理
  *      * 类加载首先向上委托直到最上父类，能加载就加载，不能加载向下传
  *      * 优点：避免类的重复加载；保护程序安全，避免核心API被篡改
  *      * 两个Class对象相同的充分必要条件为：类的全路径名相同+加载类的类加载器对象相同
+ * 6. 类加载案例
+ *      1. Tomcat
+ *          * 需求：
+ *              * 同一服务器上的不同web服务类加载保证隔离的同时可共享
+ *              * web服务器本身与web应用隔离
+ *              * 支持热部署，即加载类的热替换
+ *          * 不同组类资源目录，采用不同的加载策略（Tomcat为例）
+ *              * /common：类库提供给tomcat和所有的web服务使用
+ *              * /server：tomcat自身使用，对所有web服务不可见
+ *              * /shared：对tomcat不可见，所有web服务共享
+ *              * /WebApp/WEB-INF：仅当前web服务可用
+ *          * 对应加载器设计策略：
+ *              * CommonClassLoader(加载/common)
+ *                  * CatalinaClassLoader(加载/server)
+ *                  * SharedClassLoader(加载/shared) -> WebappClassLoader(加载/WEB-INF)  -> JasperLoader
+ *
  * */
 
 public class ClassLoadLearn {
