@@ -135,7 +135,7 @@ import java.util.concurrent.locks.*;
  * 12. 读写锁（ReentrantReadWriteLock）
  *      * 底层基于一个Sync对象，其中state高16位记录读线程，低16位记录写线程
  *      * 获取读写锁的线程通过是否为ShareNode区分（读线程在队列中为ShareNode,写线程在队列中为ExclusiveNode）
- *      * 当写线程获取锁时，会判断队列中下一个节点是否为ShareNode,若为ShareNode同时唤醒
+ *      * 当读获取锁时，会判断队列中下一个节点是否为ShareNode,若为ShareNode同时唤醒
  *        if (shared)
  *          signalNextIfShared(node);
  *      * 写线程独占锁，导致其他并发线程进入队列
@@ -426,6 +426,7 @@ public class BasicUse {
         executor.shutdown();
         ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
         readWriteLock.readLock().lock();
+
     }
 
 
@@ -469,6 +470,7 @@ public class BasicUse {
         Condition condition = reentrantLock.newCondition();
         condition.await();
         condition.signal();
+
     }
 
 }

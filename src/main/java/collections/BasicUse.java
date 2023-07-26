@@ -93,11 +93,17 @@ import java.util.stream.Collectors;
  *          * CONCURRENTxxx
  *      * ConcurrentHashMap：
  *          * JDK1.7实现：ConcurrentHashMap 把哈希桶数组切分成小数组（Segment ），每个小数组有 n 个 HashEntry 组成。
- *              * 创建默认创建16个Segment
- *              * put首先获取到对应的segment,获取对应锁后，再进行哈希表操作
+ *              * 创建默认创建16个Segment，每个segment内部一个存放entry的table，扩容也在segment内部扩容
+ *              * 计算hash槽位的逻辑：首先计算segment未知（(hash >>> segmentShift) & segmentMask），再计算segment内的未知
+ *                 (tab.length - 1) & hash
+ *              * 添加元素之前首先要初始化segment，只有第segment[0]在创建时初始化，其他调用是初始化，基于cas解决并发冲突问题
+ *              * put加segment锁：循环调用trylock()，超过一定时间调用lock()获取segment块的锁。
  *              * get不需要加锁，直接获取对应segment的对应值
- *              * rehash（） 只在segment内，所以put时已经获取锁，不需要额外操作
- *              * 锁的segment，其他segment可以并发操作
+ *              * rehash（） ：只在segment内，所以put时已经获取锁，不需要额外操作，扩容为原来的两倍。扩容是将oldtable迁移到newtable，
+ *                所以并不存在并发问题
+ *              * 并发问题：
+ *                  * 读和扩容并发：没影响，最后时刻才替换，且table使用了valitle关键字
+ *                  * 读和写并发：插入表头无影响
  *          * JDK1.8实现：基本与HashMap相同：数组+链表/红黑树
  *              * 懒惰初始化，基于cas操作初始化表（CAS设置SIZECTL，只有操作成功的线程能够进行初始化）
  *              * put() 基于cas操作初始化表和每个桶位置对应的链表头,当需要执行链表插入时，只需要基于synchronized锁住链表头

@@ -27,7 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
  *      * 偏向锁
  *          * 线程通过CAS操作将MarkWord中的threadId从0改为自己的ID，成功继续执行，否则升级为轻量级锁
  *          * 偏向锁对于支持低成本可重入：判断threadId为当前线程，在线程栈中创建空mark word的Lock Record
- *          * 偏向锁只有在出现竞争时才会被动释放或者升级->回到未锁定（执行完）/轻量级锁状态（为执行完）
+ *          * 偏向锁只有在出现竞争时才会被动释放或者升级->回到未锁定（执行完）/轻量级锁状态（未执行完）
  *      * 轻量级锁
  *          * 线程栈创建一个LockRecord，obj指向锁对象，锁对象maskword存储到LockRecord中
  *          * 通过尝试CAS将LockRecord地址存储到对象头mark word中，成功则获取锁成功

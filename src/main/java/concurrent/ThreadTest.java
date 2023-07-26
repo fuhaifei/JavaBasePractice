@@ -104,7 +104,7 @@ import java.util.concurrent.*;
  *
  * * ThreadLocal 和 InheritableThreadLocal
  *     * ThreadLocal: 保存线程的变量，线程之间相互隔离
- *          * 原理：每个线程将自身持有的所有ThreadLocal放在一个ThreadLocalMap中
+ *          * 原理：每个线程将自身持有的所有ThreadLocal放在自身的ThreadLocalMap中
  *                 其中Key为对象哈希值，value为ThreadLocal存储的值
  *          * ThreadLocal.ThreadLocalMap threadLocals
  *     * InheritableThreadLocal：父子线程之间实现线程参数传递
@@ -112,7 +112,7 @@ import java.util.concurrent.*;
  *            inheritableThreadLocals在创建时会复制父线程中的ThreadLocal对象
  *
  *          * ThreadLocal.ThreadLocalMap inheritableThreadLocals
- * * Fork/Join：JDK1.7加入的新的线程池实现，分治实现cpu密集型云散
+ * * Fork/Join：JDK1.7加入的新的线程池实现，分治实现cpu密集型运算
  *     * 分治任务继承 RecursiveTask（有返回值）或者 RecursiveAction(无法返回值)，实现compute方法（）
  *     * 通过调用fork()/join()实现多线程递归
  protected Integer compute() {
