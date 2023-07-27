@@ -83,8 +83,8 @@ import java.util.concurrent.locks.*;
  *      * 默认加锁流程：线程获取锁->state=1，获取失败->若当前节点为头节点，根据spin次数重试获取锁,否则修改状态为Waiting
  *                      ->调用LockSupport.park() 进入Waiting状态,等待唤醒
  *      * 默认解锁流程：上个一个线程释放锁->signalNext(head)—> LockSupport.unpark(s.waiter);
- * 9. ReentrantLock锁原理
- *      * 非公平锁实现原理：在获取锁前不判断队列中是否存在线程，先尝试获取锁后，获取失败再加入队列
+ * 9. ReentrantLock锁原理非公平锁实现原理：在获取锁前不判断队列中是否存
+ *      * 在线程，先尝试获取锁后，获取失败再加入队列
  *          * 上锁前首先调用initialTryLock()方法
  *              final void lock() {
  *                   if (!initialTryLock())
