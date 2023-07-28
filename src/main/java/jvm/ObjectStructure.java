@@ -57,6 +57,8 @@ import org.junit.Test;
  *      * 底层存储结构
  *          * JDK8及以上版本：private final char[] value;(char两个字节)
  *          * JDK9及以后版本：private final byte[] value(byte一个字节) + private final byte coder（标记编码Latin-1/UTF-16）;
+ *              * 在只用英文常见字母时使用latin-1（1byte）节省存储空间；出现latin-1无法容纳字符时，使用UTF-16（2/4）
+ *              * 之所以不使用utf8的原因在于utf8不定长（1-4字节），虽然长度短但是不适合连续存储
  *          * 为了解决字符串占用大量堆空间的问题，从应用收集到的数据表明大多数字符为Latin-1,只占用一个字符
  *          * 解释：<a href="https://www.zhihu.com/question/447224628">...</a>
  *      * 字符串常量池(StringTable)

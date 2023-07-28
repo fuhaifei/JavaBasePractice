@@ -41,6 +41,12 @@ import java.io.FileNotFoundException;
  *          * clazz.getClassLoader(): 每个class对象提供加载其的类加载器
  *          * Thread.currentThread().getContextClassLoader(): 获得当前线程上下文的ClassLoader
  *          * ClassLoader.getSystemClassLoader(): 获得系统ClassLoader
+ *      * SPI+线程上下文加载器破坏了双亲委派机制：由于SPI核心接口由JDK提供，所以类加载需要在交给boostarp classloader加载，然而加载完成
+ *        对应接口后由于实现类不由jdk提供，因此需要引入线程上下文加载器，父加载器调用线程上下文加载器加载
+ *        （线程上下文加载器往往为applicationClassLoader）
+ *      * 线程上线文加载器：本质上就是一个随着线程传递的类加载器，由于线程开始于应用程序，所以其中携带的类加载器实际上就是应用程序层次的类加载，
+ *        当父类需要加载自己访问不到但是子类能够访问的类时，通过改类加载器完成类加载，这就是SPI的核心
+ *      * 上层加载类 依赖 下层加载类，需要线程上下文加载器
  * 5. 双亲委派原理
  *      * 类加载首先向上委托直到最上父类，能加载就加载，不能加载向下传
  *      * 优点：避免类的重复加载；保护程序安全，避免核心API被篡改

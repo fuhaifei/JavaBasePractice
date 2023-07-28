@@ -33,8 +33,14 @@ import java.util.ServiceLoader;
                 Registry Service = iterator.next();
            }
         * 第一行传入线程上下文加载器（默认为AppClassLoader），构造serviceloader对象
-        * serviceloader的内部serviceloader，扫描"META-INF/services/"文件，确定需要啊加载的实现类
+        * serviceloader的内部serviceloader，扫描"META-INF/services/"文件，确定需要加载的实现类
  *      * next（）方法不断通过反射加载对应实现类，通过反射机制创建对象
+ *      * SPI案例：
+ *          * JDBC Driver的加载，不再使用Class.forname()手动加载，而是通过getConnection()基于SPI机制自动加载
+ *          * springboot自动配置从CLASSPATH下的每个Jar包中搜寻所有META-INF/spring.factories配置文件
+ *
+ *
+ *
 
  * */
 
