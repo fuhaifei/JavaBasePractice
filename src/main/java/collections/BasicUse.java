@@ -106,7 +106,7 @@ import java.util.stream.Collectors;
  *                  * 读和写并发：插入表头无影响
  *          * JDK1.8实现：基本与HashMap相同：数组+链表/红黑树
  *              * 懒惰初始化，基于cas操作初始化表（CAS设置SIZECTL，只有操作成功的线程能够进行初始化）
- *              * put() 基于cas操作初始化表和每个桶位置对应的链表头,当需要执行链表插入时，只需要基于synchronized锁住链表头
+ *              * put() 基于cas操作初始化表，若对应位置为空，则cas放置链表头,否则执行链表插入时，只需要基于synchronized锁住链表头
  *              * get() 无锁操作，若get获得的是ForwardingNode，则在新表中进行搜索
  *              * size() 元素个数统计类似于ADDER基于cell的实现，无竞争向baseCount添加，有竞争向cell累加
  *              * treeify()/untreeify() 基于synchronized锁住链表头

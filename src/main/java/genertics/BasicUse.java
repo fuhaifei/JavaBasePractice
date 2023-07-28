@@ -16,6 +16,8 @@ import java.util.*;
  *    例如List<String> 和 List<Integer>->List//编译不通过，已经存在形同方法签名
  *        void m(List<String> numbers){}
  *        void m(List<Integer> Strings){}
+ *    * 桥方法解决泛型擦除和多态冲突的问题
+ *         * 我们的写的方法并不是真的重写，编译器会帮我们自动生成对应桥方法，桥方法重写，内部调用我们写的方法
  *
  * 4. ?:类型通配符，包括三种形式
  *    (1)<?> 无限制通配符
