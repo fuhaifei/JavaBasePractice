@@ -199,6 +199,7 @@ package SpringSecurity;
  *          * 其他附加属性：提交人/回复人/创建时间/更新时间/内容/点赞等
  *      * seer_comment_tag（评论标签表）在发起评论时可选择评论的标签，该表存储标签内容，包括标签名/创建人等信息
  *      * seer_comment_relation（评论与标签关联表）存储评论与标签之间的关联关系
+ *          * 描述准确，评估方法合理，解决方法未理解，事件描述不理解等
  *      * seer_comment_star（评论点赞表）记录对于评论的点赞，包括 comment_id（评论）, start_mis（点赞人）等
  * */
 
