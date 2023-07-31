@@ -179,6 +179,27 @@ package SpringSecurity;
  *          * MD5withRSA
  *          * SHA1withRSA
  *          * SHA256withRSA
+ *
+ * 项目整理
+ *    1. 基于消息队列+线程池提升接口qps
+ *       * 背景：事件上报由于涉及到比较多的查询处理逻辑（查询事件定义->事件过滤->事件通知->初始化事件处理），
+ *          导致用户在提交时往往等待比较久的时间（504超时3s），原有接口在压测环境下qps为10。
+ *       * 解决方案：提交接口将消息写入kafka，直接返回工程。kafka消费线程直接使用线程池，参数为：
+ *          * corepoolsize = 2, maxpoolsize = 5, reject_handler=在当前线程执行
+ *       * 效果：在现有的业务场景下不会再出现504超时问题，使用线程池后的qps能够达到30
+ *    2. 慢查询优化
+ *       1. 加索引，拆查询优化了一系列慢查询
+ *          * 用户名（模糊）风险聚合查询：事件表+事件定义表+用户表（1.2s） ——> 拆成了两个查询（用户表查询 + in）（0.2秒）
+ *          * 特定状态事件查询->事件状态+关闭原因上添加索引（0.6s->0.1）
+ *       2. 拆join+本地缓存()
+ *          * org-> child org的缓存，caffeine做本地缓存
+ *    3. 评论模块
+ *      * seer_comment_detail （评论详细表）记录对于风险定义的评论信息，主要属性包括
+ *          * id属性：id + risk_def_id + risk_event_id + parent_id
+ *          * 其他附加属性：提交人/回复人/创建时间/更新时间/内容/点赞等
+ *      * seer_comment_tag（评论标签表）在发起评论时可选择评论的标签，该表存储标签内容，包括标签名/创建人等信息
+ *      * seer_comment_relation（评论与标签关联表）存储评论与标签之间的关联关系
+ *      * seer_comment_star（评论点赞表）记录对于评论的点赞，包括 comment_id（评论）, start_mis（点赞人）等
  * */
 
 public class BasicUse {
