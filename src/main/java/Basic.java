@@ -1,3 +1,6 @@
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Java基础概念
@@ -106,6 +109,9 @@
  *    * 读已提交：MVVC读（每个读一个readview）+ 行锁
  *    * 可重复读：MVVC读（一个事务一个readview） + 行锁
  *    * 顺序一致性：表级共享锁读+表级排他锁
+ * 4. Using Index 和 Using Where的区别
+ *    * Using Index: 标识当前查询走索引，不需要回表查询
+ *    * Using Where：标识当前查询获得结果后，需要经过Where过滤
  * 分布式理论补充
  * 1. Binlog 和 redo log 一致性问题
  *      * redo log持久化成功，binlog失败，会导致主从状态不一致，当主节点失效，从节点成为新的主时会出现幻读问题
@@ -177,6 +183,13 @@ public class Basic {
         private  String getAge(){
             return "nb";
         }
+    }
+
+    public static void main(String[] args) throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date date1 = format.parse("2022-07-01");
+        Date date2 = format.parse("2022-07-31");
+        System.out.println(date2.getTime() - date1.getTime());
     }
 
 }
