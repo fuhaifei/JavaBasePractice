@@ -1,10 +1,5 @@
 package jvm;
 
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * JVM垃圾回收相关知识总结
  * 1. 基础总结

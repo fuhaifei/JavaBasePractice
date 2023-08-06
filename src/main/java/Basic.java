@@ -152,6 +152,14 @@
  *      * 先知慢查询优化案例
  *          * 查询归属某个人的风险记录时，人名模糊查询导致风险事件全表扫描，优化策略：子查询查询用户名+外部查询插风险事件
  *          * 查询某个组织的待处理和处理中风险：拆分sql，将组织查询独立出来，并通过caffeine本地缓存
+ *  Spring八股补充
+ *  1. Spring循环依赖问题-引入三级缓存解决
+ *      * 只有基于setter，属性注入的循环依赖才能够自动处理，基于构造方法的无法解决
+ *      * java Bean创建过程:对象实例化->依赖注入->前置处理->初始化方法（initializeBean）->后置处理
+ *      * 三重缓存：
+ *          1. singletonObjects：存放组装好的bean对象
+ *          2. earlySingletonObjects：存放已经初始化，但未完全依赖注入的bean对象
+ *          3. singletonFactories：单例对象工厂的cache，存放 bean 工厂对象，用于解决循环依赖
  * */
 public class Basic {
     public final String name;
