@@ -203,5 +203,4 @@ package SpringSecurity;
  *      * seer_comment_star（评论点赞表）记录对于评论的点赞，包括 comment_id（评论）, start_mis（点赞人）等
  * */
 
-public class BasicUse {
-}
+
