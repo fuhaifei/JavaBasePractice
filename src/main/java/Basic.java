@@ -198,6 +198,7 @@ public class Basic {
         Date date1 = format.parse("2022-07-01");
         Date date2 = format.parse("2022-07-31");
         System.out.println(date2.getTime() - date1.getTime());
+        System.out.println("【风险规则生效通知】您申请的风险规则(%s)风险生效范围变更，由于存在一个月未审批的工单自动关闭。\n[查看详情|%s]\n");
     }
 
 }

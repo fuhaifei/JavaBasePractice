@@ -49,6 +49,8 @@ import java.util.stream.Collectors;
  *                             Object[] EMPTY_ELEMENTDATA = {};
  *          * 扩容机制：Vector 创建时未指定capacityIncrement，则长度翻倍；指定了capacityIncrement，长度增加capacityIncrement
  *                    ArrayList 长度扩大为 oldCapacity + oldCapacity >> 1，即原来空间大小的1.5倍
+ *                      * 扩大2倍是通过公式计算出来，在扩大因子=2是平均到每个元素的扩容成本最小
+ *                      * 扩大2倍会导致无法使用之前释放的旧空间，因为每次一分配的新空间长度都要比旧空间长度长（1 - 1.68之间，1.5比较好计算）
  *          * 线程安全：Vector在方法上添加了synchronized关键字，保证并发安全性
  *                    ArrayList 线程不安全
  *          * modCount: modCount记录造成数组长度变化的操作，用在iterator遍历过程中判断是否存在对于集合的并发修改
@@ -71,6 +73,9 @@ import java.util.stream.Collectors;
  *                        * 存在相同key（hashcode相同，且equals()相同）,修改key对应value
  *                        * 不为空插入到链表尾部，若链表长度>TREEIFY_THRESHOLD(8),转化为红黑树（数组长度超过64）
  *          * resize()：数组长度变为原来的两倍，并进行rehash,红黑树需要进行拆分，若长度<=UNTREEIFY_THRESHOLD,退化为链表
+ *              * 按照两倍扩容有两个好处：
+ *                  1. hash数组的长度始终为2^n,通过逻辑运算替代除法，降低计算hash位置的成本
+ *                  2. 扩容时只会出现低位向高位移动的情况，hash高位为1的移动，为0的移动，降低移动成本
  *          * JDK8和之前的区别：将<K,V>存储在内部Node/TreeNode类中，Node类继承自Entry
  *              * 1.8之前采用头插法，1.8采用尾插法
  *      * LinkedHashMap: 基于链表维护元素加入Map的顺序
@@ -99,7 +104,7 @@ import java.util.stream.Collectors;
  *              * 添加元素之前首先要初始化segment，只有第segment[0]在创建时初始化，其他调用是初始化，基于cas解决并发冲突问题
  *              * put加segment锁：循环调用trylock()，超过一定时间调用lock()获取segment块的锁。
  *              * get不需要加锁，直接获取对应segment的对应值
- *              * rehash（） ：只在segment内，所以put时已经获取锁，不需要额外操作，扩容为原来的两倍。扩容是将oldtable迁移到newtable，
+ *              * rehash（）：只在segment内，所以put时已经获取锁，不需要额外操作，扩容为原来的两倍。扩容是将oldtable迁移到newtable，
  *                所以并不存在并发问题
  *              * 并发问题：
  *                  * 读和扩容并发：没影响，最后时刻才替换，且table使用了valitle关键字
