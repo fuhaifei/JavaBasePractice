@@ -112,6 +112,7 @@ import java.util.concurrent.*;
  *              * value为强引用，这就导致 存在key被回收，value不回收的情况
  *                  * set时key为null直接覆盖
  *                  * get/set()运行时会调用 expungeStaleEntry，该方法清楚key为null的entry，并将线性探查法解决移动的键值对往回移动
+ *              * 虽然threadlocal有主动垃圾收回机制，但如果不调用get/set方法不会触发垃圾回收，因此最好主动调用remove()方法
  *     * InheritableThreadLocal：父子线程之间实现线程参数传递
  *          * getMap()获得ThreadLocalMap对象从threadLocals->inheritableThreadLocals，
  *            inheritableThreadLocals在创建时会复制父线程中的ThreadLocal对象
