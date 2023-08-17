@@ -107,6 +107,11 @@ import java.util.concurrent.*;
  *          * 原理：每个线程将自身持有的所有ThreadLocal放在自身的ThreadLocalMap中
  *                 其中Key为对象哈希值，value为ThreadLocal存储的值
  *          * ThreadLocal.ThreadLocalMap threadLocals
+ *              * 内部类，基于线性探查法解决hash冲突的hash表
+ *              * 内部元素类型为 WeakReference<ThreadLocal<?>>，为了保证线程不使用时直接回收（线程不持有key时）
+ *              * value为强引用，这就导致 存在key被回收，value不回收的情况
+ *                  * set时key为null直接覆盖
+ *                  * get/set()运行时会调用 expungeStaleEntry，该方法清楚key为null的entry，并将线性探查法解决移动的键值对往回移动
  *     * InheritableThreadLocal：父子线程之间实现线程参数传递
  *          * getMap()获得ThreadLocalMap对象从threadLocals->inheritableThreadLocals，
  *            inheritableThreadLocals在创建时会复制父线程中的ThreadLocal对象
