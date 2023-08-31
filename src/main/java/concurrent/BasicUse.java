@@ -470,7 +470,6 @@ public class BasicUse {
         Condition condition = reentrantLock.newCondition();
         condition.await();
         condition.signal();
-
     }
 
 }
